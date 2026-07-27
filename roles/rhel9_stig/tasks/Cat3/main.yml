@@ -1,0 +1,1319 @@
+# Source: ComplianceAsCode/content (scap-security-guide) — BSD-3-Clause
+# Imported by StigForge; cloud-breaker tasks stripped per policy/cloud-ami.yml
+---
+- block:
+  - name: Ensure rng-tools is installed
+    ansible.builtin.package:
+      name: rng-tools
+      state: present
+    when: ( "kernel" in ansible_facts.packages )
+    tags:
+    - CCE-83504-1
+    - DISA-STIG-RHEL-09-215090
+    - enable_strategy
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - package_rng-tools_installed
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure rng-tools is installed'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure rng-tools is installed'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure policycoreutils is installed
+    ansible.builtin.package:
+      name: policycoreutils
+      state: present
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84071-0
+    - DISA-STIG-RHEL-09-431025
+    - enable_strategy
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - package_policycoreutils_installed
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure policycoreutils is installed'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure policycoreutils is installed'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: 'Uninstall nfs-utils Package: Ensure nfs-utils is removed'
+    ansible.builtin.package:
+      name: nfs-utils
+      state: absent
+    tags:
+    - CCE-84243-5
+    - DISA-STIG-RHEL-09-215025
+    - disable_strategy
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - package_nfs-utils_removed
+  rescue:
+  - name: 'StigForge: continue after error in ''Uninstall nfs-utils Package: Ensure nfs-utils is removed'' (OpenSCAP is the
+      score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Uninstall nfs-utils Package: Ensure nfs-utils is removed'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Get rules groups
+    ansible.builtin.shell: 'set -o pipefail
+
+      LC_ALL=C grep "^[A-Z][A-Za-z_]*" /etc/aide.conf | grep -v "^ALLXTRAHASHES" | cut -f1 -d ''='' | tr -d '' '' | sort -u
+      || true
+
+      '
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - '''aide'' in ansible_facts.packages'
+    register: find_rules_groups_results
+    tags:
+    - CCE-90837-6
+    - DISA-STIG-RHEL-09-651030
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-SI-7
+    - NIST-800-53-SI-7(1)
+    - aide_verify_acls
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Get rules groups'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Get rules groups'' raised an error (module or templating) and was skipped; continuing so later rules
+        still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure the acl rule is present when aide is installed.
+    ansible.builtin.replace:
+      path: /etc/aide.conf
+      regexp: (^\s*{{ item }}\s*=\s*)(?!.*acl)([^\s]*)
+      replace: \g<1>\g<2>+acl
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - find_rules_groups_results is not skipped and "'aide' in ansible_facts.packages"
+    with_items: '{{ find_rules_groups_results.stdout_lines | map(''trim'') | list }}'
+    tags:
+    - CCE-90837-6
+    - DISA-STIG-RHEL-09-651030
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-SI-7
+    - NIST-800-53-SI-7(1)
+    - aide_verify_acls
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure the acl rule is present when aide is installed.'' (OpenSCAP is the
+      score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure the acl rule is present when aide is installed.'' raised an error (module or templating) and
+        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Get rules groups
+    ansible.builtin.shell: 'set -o pipefail
+
+      LC_ALL=C grep "^[A-Z][A-Za-z_]*" /etc/aide.conf | grep -v "^ALLXTRAHASHES" | cut -f1 -d ''='' | tr -d '' '' | sort -u
+      || true
+
+      '
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - '''aide'' in ansible_facts.packages'
+    register: find_rules_groups_results
+    tags:
+    - CCE-83439-0
+    - DISA-STIG-RHEL-09-651035
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-SI-7
+    - NIST-800-53-SI-7(1)
+    - aide_verify_ext_attributes
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Get rules groups'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Get rules groups'' raised an error (module or templating) and was skipped; continuing so later rules
+        still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure the xattrs rule is present when aide is installed.
+    ansible.builtin.replace:
+      path: /etc/aide.conf
+      regexp: (^\s*{{ item }}\s*=\s*)(?!.*xattrs)([^\s]*)
+      replace: \g<1>\g<2>+xattrs
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - find_rules_groups_results is not skipped and "'aide' in ansible_facts.packages"
+    with_items: '{{ find_rules_groups_results.stdout_lines | map(''trim'') | list }}'
+    tags:
+    - CCE-83439-0
+    - DISA-STIG-RHEL-09-651035
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-SI-7
+    - NIST-800-53-SI-7(1)
+    - aide_verify_ext_attributes
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure the xattrs rule is present when aide is installed.'' (OpenSCAP is the
+      score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure the xattrs rule is present when aide is installed.'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Disable GNOME3 Automounting - autorun-never
+    community.general.ini_file:
+      dest: /etc/dconf/db/local.d/00-security-settings
+      section: org/gnome/desktop/media-handling
+      option: autorun-never
+      value: 'true'
+      create: true
+      no_extra_spaces: true
+    when: '"gdm" in ansible_facts.packages'
+    tags:
+    - CCE-90257-7
+    - DISA-STIG-RHEL-09-271030
+    - DISA-STIG-RHEL-09-271035
+    - NIST-800-171-3.1.7
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - dconf_gnome_disable_autorun
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable GNOME3 Automounting - autorun-never'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable GNOME3 Automounting - autorun-never'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Prevent user modification of GNOME3 Automounting - autorun-never
+    ansible.builtin.lineinfile:
+      path: /etc/dconf/db/local.d/locks/00-security-settings-lock
+      regexp: ^/org/gnome/desktop/media-handling/autorun-never$
+      line: /org/gnome/desktop/media-handling/autorun-never
+      create: true
+    when: '"gdm" in ansible_facts.packages'
+    tags:
+    - CCE-90257-7
+    - DISA-STIG-RHEL-09-271030
+    - DISA-STIG-RHEL-09-271035
+    - NIST-800-171-3.1.7
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - dconf_gnome_disable_autorun
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Prevent user modification of GNOME3 Automounting - autorun-never'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Prevent user modification of GNOME3 Automounting - autorun-never'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Dconf Update
+    ansible.builtin.command: dconf update
+    when: '"gdm" in ansible_facts.packages'
+    tags:
+    - CCE-90257-7
+    - DISA-STIG-RHEL-09-271030
+    - DISA-STIG-RHEL-09-271035
+    - NIST-800-171-3.1.7
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - dconf_gnome_disable_autorun
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Dconf Update'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Dconf Update'' raised an error (module or templating) and was skipped; continuing so later rules
+        still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure dnf Removes Previous Package Versions - Ensure DNF Removes Previous Package Versions
+    ansible.builtin.lineinfile:
+      dest: /etc/dnf/dnf.conf
+      regexp: ^#?clean_requirements_on_remove
+      line: clean_requirements_on_remove=1
+      insertafter: \[main\]
+      create: true
+    when: '"dnf" in ansible_facts.packages'
+    tags:
+    - CCE-83458-0
+    - DISA-STIG-RHEL-09-214035
+    - NIST-800-171-3.4.8
+    - NIST-800-53-CM-11(a)
+    - NIST-800-53-CM-11(b)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-SI-2(6)
+    - clean_components_post_updating
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure dnf Removes Previous Package Versions - Ensure DNF Removes Previous
+      Package Versions'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure dnf Removes Previous Package Versions - Ensure DNF Removes Previous Package Versions'' raised
+        an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+- block:
+  - name: Ensure PAM Displays Last Logon/Access Notification - Check if system relies on authselect tool
+    ansible.builtin.stat:
+      path: /usr/bin/authselect
+    register: result_authselect_present
+    when: '"pam" in ansible_facts.packages'
+    tags:
+    - CCE-83560-3
+    - CJIS-5.5.2
+    - DISA-STIG-RHEL-09-412075
+    - NIST-800-53-AC-9
+    - NIST-800-53-AC-9(1)
+    - PCI-DSS-Req-10.2.4
+    - PCI-DSSv4-10.2
+    - PCI-DSSv4-10.2.1
+    - PCI-DSSv4-10.2.1.4
+    - configure_strategy
+    - display_login_attempts
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure PAM Displays Last Logon/Access Notification - Check if system relies
+      on authselect tool'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Check if system relies on authselect tool''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+- block:
+  - name: Ensure PAM Displays Last Logon/Access Notification - Collect the Available authselect Features
+    ansible.builtin.command:
+      cmd: authselect list-features sssd
+    register: result_authselect_available_features
+    changed_when: false
+    check_mode: false
+    when:
+    - '"pam" in ansible_facts.packages'
+    - (result_authselect_present is not skipped and result_authselect_present.stat.exists)
+    tags:
+    - CCE-83560-3
+    - CJIS-5.5.2
+    - DISA-STIG-RHEL-09-412075
+    - NIST-800-53-AC-9
+    - NIST-800-53-AC-9(1)
+    - PCI-DSS-Req-10.2.4
+    - PCI-DSSv4-10.2
+    - PCI-DSSv4-10.2.1
+    - PCI-DSSv4-10.2.1.4
+    - configure_strategy
+    - display_login_attempts
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure PAM Displays Last Logon/Access Notification - Collect the Available
+      authselect Features'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Collect the Available authselect Features''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+- block:
+  - name: Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so Using authselect Feature
+    block:
+    - name: Ensure PAM Displays Last Logon/Access Notification - Check integrity of authselect current profile
+      ansible.builtin.command:
+        cmd: authselect check
+      register: result_authselect_check_cmd
+      changed_when: false
+      check_mode: false
+      failed_when: false
+    - name: Ensure PAM Displays Last Logon/Access Notification - Informative message based on the authselect integrity check
+        result
+      ansible.builtin.assert:
+        that:
+        - ansible_check_mode or result_authselect_check_cmd.rc == 0
+        fail_msg:
+        - authselect integrity check failed. Remediation aborted!
+        - This remediation could not be applied because an authselect profile was not selected or the selected profile is
+          not intact.
+        - It is not recommended to manually edit the PAM files when authselect tool is available.
+        - In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is recommended.
+        success_msg:
+        - authselect integrity check passed
+    - name: Ensure PAM Displays Last Logon/Access Notification - Get authselect Features Currently Enabled
+      ansible.builtin.shell:
+        cmd: authselect current | tail -n+3 | awk '{ print $2 }'
+      register: result_authselect_features
+      changed_when: false
+      check_mode: false
+      when:
+      - result_authselect_check_cmd is success
+    - name: Ensure PAM Displays Last Logon/Access Notification - Ensure "with-silent-lastlog" Feature is Disabled Using authselect
+        Tool
+      ansible.builtin.command:
+        cmd: authselect disable-feature with-silent-lastlog
+      register: result_authselect_disable_feature_cmd
+      when:
+      - result_authselect_check_cmd is success
+      - result_authselect_features.stdout is search("with-silent-lastlog")
+    - name: Ensure PAM Displays Last Logon/Access Notification - Ensure authselect changes are applied
+      ansible.builtin.command:
+        cmd: authselect apply-changes -b
+      when:
+      - result_authselect_disable_feature_cmd is not skipped
+      - result_authselect_disable_feature_cmd is success
+    when:
+    - '"pam" in ansible_facts.packages'
+    - (result_authselect_present is not skipped and result_authselect_present.stat.exists)
+    - result_authselect_available_features.stdout is search("with-silent-lastlog")
+    tags:
+    - CCE-83560-3
+    - CJIS-5.5.2
+    - DISA-STIG-RHEL-09-412075
+    - NIST-800-53-AC-9
+    - NIST-800-53-AC-9(1)
+    - PCI-DSS-Req-10.2.4
+    - PCI-DSSv4-10.2
+    - PCI-DSSv4-10.2.1
+    - PCI-DSSv4-10.2.1.4
+    - configure_strategy
+    - display_login_attempts
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so
+      Using authselect Feature'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so Using authselect Feature''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+- block:
+  - name: Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so in appropriate PAM files
+    block:
+    - name: Ensure PAM Displays Last Logon/Access Notification - Define the PAM file to be edited as a local fact
+      ansible.builtin.set_fact:
+        pam_file_path: /etc/pam.d/postlogin
+    - name: Ensure PAM Displays Last Logon/Access Notification - Check if system relies on authselect tool
+      ansible.builtin.stat:
+        path: /usr/bin/authselect
+      register: result_authselect_present
+    - name: Ensure PAM Displays Last Logon/Access Notification - Ensure authselect custom profile is used if authselect is
+        present
+      block:
+      - name: Ensure PAM Displays Last Logon/Access Notification - Check integrity of authselect current profile
+        ansible.builtin.command:
+          cmd: authselect check
+        register: result_authselect_check_cmd
+        changed_when: false
+        check_mode: false
+        failed_when: false
+      - name: Ensure PAM Displays Last Logon/Access Notification - Informative message based on the authselect integrity check
+          result
+        ansible.builtin.assert:
+          that:
+          - ansible_check_mode or result_authselect_check_cmd.rc == 0
+          fail_msg:
+          - authselect integrity check failed. Remediation aborted!
+          - This remediation could not be applied because an authselect profile was not selected or the selected profile is
+            not intact.
+          - It is not recommended to manually edit the PAM files when authselect tool is available.
+          - In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is
+            recommended.
+          success_msg:
+          - authselect integrity check passed
+      - name: Ensure PAM Displays Last Logon/Access Notification - Get authselect current profile
+        ansible.builtin.shell:
+          cmd: authselect current -r | awk '{ print $1 }'
+        register: result_authselect_profile
+        changed_when: false
+        when:
+        - result_authselect_check_cmd is success
+      - name: Ensure PAM Displays Last Logon/Access Notification - Define the current authselect profile as a local fact
+        ansible.builtin.set_fact:
+          authselect_current_profile: '{{ result_authselect_profile.stdout }}'
+          authselect_custom_profile: '{{ result_authselect_profile.stdout }}'
+        when:
+        - result_authselect_profile is not skipped
+        - result_authselect_profile.stdout is match("custom/")
+      - name: Ensure PAM Displays Last Logon/Access Notification - Define the new authselect custom profile as a local fact
+        ansible.builtin.set_fact:
+          authselect_current_profile: '{{ result_authselect_profile.stdout }}'
+          authselect_custom_profile: custom/hardening
+        when:
+        - result_authselect_profile is not skipped
+        - result_authselect_profile.stdout is not match("custom/")
+      - name: Ensure PAM Displays Last Logon/Access Notification - Get authselect current features to also enable them in
+          the custom profile
+        ansible.builtin.shell:
+          cmd: authselect current | tail -n+3 | awk '{ print $2 }'
+        register: result_authselect_features
+        changed_when: false
+        check_mode: false
+        when:
+        - result_authselect_profile is not skipped
+        - authselect_current_profile is not match("custom/")
+      - name: Ensure PAM Displays Last Logon/Access Notification - Check if any custom profile with the same name was already
+          created
+        ansible.builtin.stat:
+          path: /etc/authselect/{{ authselect_custom_profile }}
+        register: result_authselect_custom_profile_present
+        changed_when: false
+        when:
+        - result_authselect_profile is not skipped
+        - authselect_current_profile is not match("custom/")
+      - name: Ensure PAM Displays Last Logon/Access Notification - Create an authselect custom profile based on the current
+          profile
+        ansible.builtin.command:
+          cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
+        when:
+        - result_authselect_profile is not skipped
+        - result_authselect_check_cmd is success
+        - authselect_current_profile is not match("^(custom/|local)")
+        - not (result_authselect_custom_profile_present is not skipped and result_authselect_custom_profile_present.stat.exists)
+      - name: Ensure PAM Displays Last Logon/Access Notification - Create an authselect custom profile based on sssd profile
+        ansible.builtin.command:
+          cmd: authselect create-profile hardening -b sssd
+        when:
+        - result_authselect_profile is not skipped
+        - result_authselect_check_cmd is success
+        - authselect_current_profile is match("local")
+        - not (result_authselect_custom_profile_present is not skipped and result_authselect_custom_profile_present.stat.exists)
+      - name: Ensure PAM Displays Last Logon/Access Notification - Ensure authselect changes are applied
+        ansible.builtin.command:
+          cmd: authselect apply-changes -b --backup=before-hardening-custom-profile
+        when:
+        - result_authselect_check_cmd is success
+        - result_authselect_profile is not skipped
+        - authselect_current_profile is not match("custom/")
+        - authselect_custom_profile is not match(authselect_current_profile)
+      - name: Ensure PAM Displays Last Logon/Access Notification - Ensure the authselect custom profile is selected
+        ansible.builtin.command:
+          cmd: authselect select {{ authselect_custom_profile }}
+        register: result_pam_authselect_select_profile
+        when:
+        - result_authselect_check_cmd is success
+        - result_authselect_profile is not skipped
+        - authselect_current_profile is not match("custom/")
+        - authselect_custom_profile is not match(authselect_current_profile)
+      - name: Ensure PAM Displays Last Logon/Access Notification - Restore the authselect features in the custom profile
+        ansible.builtin.command:
+          cmd: authselect enable-feature {{ item }}
+        loop: '{{ result_authselect_features.stdout_lines }}'
+        register: result_pam_authselect_restore_features
+        when:
+        - result_authselect_profile is not skipped
+        - result_authselect_features is not skipped
+        - result_pam_authselect_select_profile is not skipped
+      - name: Ensure PAM Displays Last Logon/Access Notification - Ensure authselect changes are applied
+        ansible.builtin.command:
+          cmd: authselect apply-changes -b --backup=after-hardening-custom-profile
+        when:
+        - result_authselect_check_cmd is success
+        - result_authselect_profile is not skipped
+        - result_pam_authselect_restore_features is not skipped
+      - name: Ensure PAM Displays Last Logon/Access Notification - Change the PAM file to be edited according to the custom
+          authselect profile
+        ansible.builtin.set_fact:
+          pam_file_path: /etc/authselect/{{ authselect_custom_profile }}/{{ pam_file_path | basename }}
+        when:
+        - authselect_custom_profile is defined
+      when:
+      - (result_authselect_present is not skipped and result_authselect_present.stat.exists)
+    - name: Ensure PAM Displays Last Logon/Access Notification - Define a fact for control already filtered in case filters
+        are used
+      ansible.builtin.set_fact:
+        pam_module_control: '[default=1]'
+    - name: Ensure PAM Displays Last Logon/Access Notification - Check if expected PAM module line is present in {{ pam_file_path
+        }}
+      ansible.builtin.lineinfile:
+        path: '{{ pam_file_path }}'
+        regexp: ^\s*session\s+{{ pam_module_control | regex_escape() }}\s+pam_lastlog.so\s*.*
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: result_pam_line_present
+    - name: Ensure PAM Displays Last Logon/Access Notification - Include or update the PAM module line in {{ pam_file_path
+        }}
+      block:
+      - name: Ensure PAM Displays Last Logon/Access Notification - Check if required PAM module line is present in {{ pam_file_path
+          }} with different control
+        ansible.builtin.lineinfile:
+          path: '{{ pam_file_path }}'
+          regexp: ^\s*session\s+.*\s+pam_lastlog.so\s*
+          state: absent
+        check_mode: true
+        changed_when: false
+        register: result_pam_line_other_control_present
+      - name: Ensure PAM Displays Last Logon/Access Notification - Ensure the correct control for the required PAM module
+          line in {{ pam_file_path }}
+        ansible.builtin.replace:
+          dest: '{{ pam_file_path }}'
+          regexp: ^(\s*session\s+).*(\bpam_lastlog.so.*)
+          replace: \1{{ pam_module_control }} \2
+        register: result_pam_module_edit
+        when:
+        - result_pam_line_other_control_present.found == 1
+      - name: Ensure PAM Displays Last Logon/Access Notification - Ensure the required PAM module line is included in {{ pam_file_path
+          }}
+        ansible.builtin.lineinfile:
+          dest: '{{ pam_file_path }}'
+          insertafter: ^\s*session\s+.*pam_succeed_if\.so.*
+          line: session    {{ pam_module_control }}    pam_lastlog.so
+        register: result_pam_module_add
+        when:
+        - result_pam_line_other_control_present.found == 0 or result_pam_line_other_control_present.found > 1
+      - name: Ensure PAM Displays Last Logon/Access Notification - Ensure authselect changes are applied
+        ansible.builtin.command:
+          cmd: authselect apply-changes -b
+        when:
+        - result_authselect_present is defined
+        - (result_authselect_present is not skipped and result_authselect_present.stat.exists)
+        - "(result_pam_module_add is defined and result_pam_module_add.changed)\n or (result_pam_module_edit is defined and\
+          \ result_pam_module_edit.changed)"
+      when:
+      - result_pam_line_present.found is defined
+      - result_pam_line_present.found == 0
+    - name: Ensure PAM Displays Last Logon/Access Notification - Define a fact for control already filtered in case filters
+        are used
+      ansible.builtin.set_fact:
+        pam_module_control: '[default=1]'
+    - name: Ensure PAM Displays Last Logon/Access Notification - Check if the required PAM module option is present in {{
+        pam_file_path }}
+      ansible.builtin.lineinfile:
+        path: '{{ pam_file_path }}'
+        regexp: ^\s*session\s+{{ pam_module_control | regex_escape() }}\s+pam_lastlog.so\s*.*\sshowfailed\b
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: result_pam_module_display_login_attempts_option_present
+    - name: Ensure PAM Displays Last Logon/Access Notification - Ensure the "showfailed" PAM option for "pam_lastlog.so" is
+        included in {{ pam_file_path }}
+      ansible.builtin.lineinfile:
+        path: '{{ pam_file_path }}'
+        backrefs: true
+        regexp: ^(\s*session\s+{{ pam_module_control | regex_escape() }}\s+pam_lastlog.so.*)
+        line: \1 showfailed
+        state: present
+      register: result_pam_display_login_attempts_add
+      when:
+      - result_pam_module_display_login_attempts_option_present.found is defined
+      - result_pam_module_display_login_attempts_option_present.found == 0
+    - name: Ensure PAM Displays Last Logon/Access Notification - Define a fact for control already filtered in case filters
+        are used
+      ansible.builtin.set_fact:
+        pam_module_control: '[default=1]'
+    - name: Ensure PAM Displays Last Logon/Access Notification - Check if {{ pam_file_path }} file is present
+      ansible.builtin.stat:
+        path: '{{ pam_file_path }}'
+      register: result_pam_file_present
+    - name: Ensure PAM Displays Last Logon/Access Notification - Ensure the "silent" option from "pam_lastlog.so" is not present
+        in {{ pam_file_path }}
+      ansible.builtin.replace:
+        dest: '{{ pam_file_path }}'
+        regexp: (.*session.*{{ pam_module_control | regex_escape() }}.*pam_lastlog.so.*)\bsilent\b=?[0-9a-zA-Z]*(.*)
+        replace: \1\2
+      register: result_pam_option_removal
+      when: (result_pam_file_present is not skipped and result_pam_file_present.stat.exists)
+    when: '"pam" in ansible_facts.packages'
+    tags:
+    - CCE-83560-3
+    - CJIS-5.5.2
+    - DISA-STIG-RHEL-09-412075
+    - NIST-800-53-AC-9
+    - NIST-800-53-AC-9(1)
+    - PCI-DSS-Req-10.2.4
+    - PCI-DSSv4-10.2
+    - PCI-DSSv4-10.2.1
+    - PCI-DSSv4-10.2.1.4
+    - configure_strategy
+    - display_login_attempts
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so
+      in appropriate PAM files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so in appropriate PAM
+        files'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
+        the resulting system state independently.'
+- block:
+  - name: Find /etc/security/limits.d files containing maxlogins configuration
+    ansible.builtin.find:
+      paths: /etc/security/limits.d
+      contains: ^[\s]*\*[\s]+(?:(?:hard)|(?:-))[\s]+maxlogins
+      patterns: '*.conf'
+    register: maxlogins
+    when: '"pam" in ansible_facts.packages'
+    tags:
+    - CCE-83641-1
+    - CJIS-5.5.2.2
+    - DISA-STIG-RHEL-09-412040
+    - NIST-800-53-AC-10
+    - NIST-800-53-CM-6(a)
+    - accounts_max_concurrent_login_sessions
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Find /etc/security/limits.d files containing maxlogins configuration'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Find /etc/security/limits.d files containing maxlogins configuration'' raised an error (module or
+        templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Limit the Number of Concurrent Login Sessions Allowed Per User in files from limits.d
+    ansible.builtin.replace:
+      dest: '{{ item.path }}'
+      regexp: ^#?\*.*maxlogins.*
+      replace: '*          hard    maxlogins     {{ var_accounts_max_concurrent_login_sessions }}'
+    with_items:
+    - '{{ maxlogins.files }}'
+    when: '"pam" in ansible_facts.packages'
+    tags:
+    - CCE-83641-1
+    - CJIS-5.5.2.2
+    - DISA-STIG-RHEL-09-412040
+    - NIST-800-53-AC-10
+    - NIST-800-53-CM-6(a)
+    - accounts_max_concurrent_login_sessions
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Limit the Number of Concurrent Login Sessions Allowed Per User in files from
+      limits.d'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Limit the Number of Concurrent Login Sessions Allowed Per User in files from limits.d'' raised an
+        error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+- block:
+  - name: Limit the Number of Concurrent Login Sessions Allowed Per User
+    ansible.builtin.lineinfile:
+      state: present
+      dest: /etc/security/limits.conf
+      insertbefore: ^# End of file
+      regexp: ^#?\*.*maxlogins
+      line: '*          hard    maxlogins     {{ var_accounts_max_concurrent_login_sessions }}'
+      create: true
+    when:
+    - '"pam" in ansible_facts.packages'
+    - maxlogins.matched == 0
+    tags:
+    - CCE-83641-1
+    - CJIS-5.5.2.2
+    - DISA-STIG-RHEL-09-412040
+    - NIST-800-53-AC-10
+    - NIST-800-53-CM-6(a)
+    - accounts_max_concurrent_login_sessions
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Limit the Number of Concurrent Login Sessions Allowed Per User'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Limit the Number of Concurrent Login Sessions Allowed Per User'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Update grub defaults and the bootloader menu
+    ansible.builtin.command: /sbin/grubby --update-kernel=ALL --args="pti=on"
+    when: ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+    tags:
+    - CCE-83843-3
+    - DISA-STIG-RHEL-09-212050
+    - NIST-800-53-SI-16
+    - grub2_pti_argument
+    - low_disruption
+    - low_severity
+    - medium_complexity
+    - reboot_required
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Update grub defaults and the bootloader menu'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Update grub defaults and the bootloader menu'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure kernel module 'firewire-core' is disabled
+    ansible.builtin.lineinfile:
+      create: true
+      dest: /etc/modprobe.d/firewire-core.conf
+      regexp: install\s+firewire-core
+      line: install firewire-core /bin/false
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84060-3
+    - DISA-STIG-RHEL-09-213055
+    - NIST-800-53-AC-18
+    - disable_strategy
+    - kernel_module_firewire-core_disabled
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+  rescue:
+  - name: 'StigForge: continue after error in "Ensure kernel module ''firewire-core'' is disabled" (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: "Ensure kernel module ''firewire-core'' is disabled" raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure kernel module 'firewire-core' is blacklisted
+    ansible.builtin.lineinfile:
+      create: true
+      dest: /etc/modprobe.d/firewire-core.conf
+      regexp: ^blacklist firewire-core$
+      line: blacklist firewire-core
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84060-3
+    - DISA-STIG-RHEL-09-213055
+    - NIST-800-53-AC-18
+    - disable_strategy
+    - kernel_module_firewire-core_disabled
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+  rescue:
+  - name: 'StigForge: continue after error in "Ensure kernel module ''firewire-core'' is blacklisted" (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: "Ensure kernel module ''firewire-core'' is blacklisted" raised an error (module or templating) and
+        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure kernel module 'tipc' is disabled
+    ansible.builtin.lineinfile:
+      create: true
+      dest: /etc/modprobe.d/tipc.conf
+      regexp: install\s+tipc
+      line: install tipc /bin/false
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84065-2
+    - DISA-STIG-RHEL-09-213065
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - disable_strategy
+    - kernel_module_tipc_disabled
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+  rescue:
+  - name: 'StigForge: continue after error in "Ensure kernel module ''tipc'' is disabled" (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: "Ensure kernel module ''tipc'' is disabled" raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure kernel module 'tipc' is blacklisted
+    ansible.builtin.lineinfile:
+      create: true
+      dest: /etc/modprobe.d/tipc.conf
+      regexp: ^blacklist tipc$
+      line: blacklist tipc
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84065-2
+    - DISA-STIG-RHEL-09-213065
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - disable_strategy
+    - kernel_module_tipc_disabled
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+  rescue:
+  - name: 'StigForge: continue after error in "Ensure kernel module ''tipc'' is blacklisted" (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: "Ensure kernel module ''tipc'' is blacklisted" raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure kernel module 'cramfs' is disabled
+    ansible.builtin.lineinfile:
+      create: true
+      dest: /etc/modprobe.d/cramfs.conf
+      regexp: install\s+cramfs
+      line: install cramfs /bin/false
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83853-2
+    - DISA-STIG-RHEL-09-231195
+    - NIST-800-171-3.4.6
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - disable_strategy
+    - kernel_module_cramfs_disabled
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+  rescue:
+  - name: 'StigForge: continue after error in "Ensure kernel module ''cramfs'' is disabled" (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: "Ensure kernel module ''cramfs'' is disabled" raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Ensure kernel module 'cramfs' is blacklisted
+    ansible.builtin.lineinfile:
+      create: true
+      dest: /etc/modprobe.d/cramfs.conf
+      regexp: ^blacklist cramfs$
+      line: blacklist cramfs
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83853-2
+    - DISA-STIG-RHEL-09-231195
+    - NIST-800-171-3.4.6
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - disable_strategy
+    - kernel_module_cramfs_disabled
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+  rescue:
+  - name: 'StigForge: continue after error in "Ensure kernel module ''cramfs'' is blacklisted" (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: "Ensure kernel module ''cramfs'' is blacklisted" raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: List /etc/sysctl.d/*.conf files
+    ansible.builtin.find:
+      paths:
+      - /etc/sysctl.d/
+      - /run/sysctl.d/
+      - /usr/local/lib/sysctl.d/
+      contains: ^[\s]*kernel.dmesg_restrict.*$
+      patterns: '*.conf'
+      file_type: any
+    register: find_sysctl_d
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83952-2
+    - DISA-STIG-RHEL-09-213010
+    - NIST-800-171-3.1.5
+    - NIST-800-53-SI-11(a)
+    - NIST-800-53-SI-11(b)
+    - disable_strategy
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+    - sysctl_kernel_dmesg_restrict
+  rescue:
+  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Comment out any occurrences of kernel.dmesg_restrict from config files
+    ansible.builtin.replace:
+      path: '{{ item.path }}'
+      regexp: ^[\s]*kernel.dmesg_restrict
+      replace: '#kernel.dmesg_restrict'
+    loop: '{{ find_sysctl_d.files }}'
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83952-2
+    - DISA-STIG-RHEL-09-213010
+    - NIST-800-171-3.1.5
+    - NIST-800-53-SI-11(a)
+    - NIST-800-53-SI-11(b)
+    - disable_strategy
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+    - sysctl_kernel_dmesg_restrict
+  rescue:
+  - name: 'StigForge: continue after error in ''Comment out any occurrences of kernel.dmesg_restrict from config files'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Comment out any occurrences of kernel.dmesg_restrict from config files'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+- block:
+  - name: Ensure sysctl kernel.dmesg_restrict is set to 1
+    ansible.posix.sysctl:
+      name: kernel.dmesg_restrict
+      value: '1'
+      sysctl_file: /etc/sysctl.conf
+      state: present
+      reload: true
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83952-2
+    - DISA-STIG-RHEL-09-213010
+    - NIST-800-171-3.1.5
+    - NIST-800-53-SI-11(a)
+    - NIST-800-53-SI-11(b)
+    - disable_strategy
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+    - sysctl_kernel_dmesg_restrict
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure sysctl kernel.dmesg_restrict is set to 1'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure sysctl kernel.dmesg_restrict is set to 1'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: List /etc/sysctl.d/*.conf files
+    ansible.builtin.find:
+      paths:
+      - /etc/sysctl.d/
+      - /run/sysctl.d/
+      - /usr/local/lib/sysctl.d/
+      contains: ^[\s]*kernel.perf_event_paranoid.*$
+      patterns: '*.conf'
+      file_type: any
+    register: find_sysctl_d
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83959-7
+    - DISA-STIG-RHEL-09-213015
+    - NIST-800-53-AC-6
+    - disable_strategy
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+    - sysctl_kernel_perf_event_paranoid
+  rescue:
+  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Comment out any occurrences of kernel.perf_event_paranoid from config files
+    ansible.builtin.replace:
+      path: '{{ item.path }}'
+      regexp: ^[\s]*kernel.perf_event_paranoid
+      replace: '#kernel.perf_event_paranoid'
+    loop: '{{ find_sysctl_d.files }}'
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83959-7
+    - DISA-STIG-RHEL-09-213015
+    - NIST-800-53-AC-6
+    - disable_strategy
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+    - sysctl_kernel_perf_event_paranoid
+  rescue:
+  - name: 'StigForge: continue after error in ''Comment out any occurrences of kernel.perf_event_paranoid from config files''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Comment out any occurrences of kernel.perf_event_paranoid from config files'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+- block:
+  - name: Ensure sysctl kernel.perf_event_paranoid is set to 2
+    ansible.posix.sysctl:
+      name: kernel.perf_event_paranoid
+      value: '2'
+      sysctl_file: /etc/sysctl.conf
+      state: present
+      reload: true
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83959-7
+    - DISA-STIG-RHEL-09-213015
+    - NIST-800-53-AC-6
+    - disable_strategy
+    - low_complexity
+    - low_severity
+    - medium_disruption
+    - reboot_required
+    - sysctl_kernel_perf_event_paranoid
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure sysctl kernel.perf_event_paranoid is set to 2'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure sysctl kernel.perf_event_paranoid is set to 2'' raised an error (module or templating) and
+        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Disable chrony daemon from acting as server
+    block:
+    - name: Check for duplicate values
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        create: true
+        regexp: (?i)^\s*port\s+
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: dupes
+    - name: Deduplicate values from /etc/chrony.conf
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        create: true
+        regexp: (?i)^\s*port\s+
+        state: absent
+      when: dupes.found is defined and dupes.found > 1
+    - name: Insert correct line to /etc/chrony.conf
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        create: true
+        regexp: (?i)^\s*port\s+
+        line: port 0
+        state: present
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - '"chrony" in ansible_facts.packages'
+    tags:
+    - CCE-87543-5
+    - DISA-STIG-RHEL-09-252025
+    - NIST-800-53-AU-12(1)
+    - NIST-800-53-AU-8(1)
+    - chronyd_client_only
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable chrony daemon from acting as server'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable chrony daemon from acting as server'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Disable network management of chrony daemon
+    block:
+    - name: Check for duplicate values
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        create: true
+        regexp: (?i)^\s*cmdport\s+
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: dupes
+    - name: Deduplicate values from /etc/chrony.conf
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        create: true
+        regexp: (?i)^\s*cmdport\s+
+        state: absent
+      when: dupes.found is defined and dupes.found > 1
+    - name: Insert correct line to /etc/chrony.conf
+      ansible.builtin.lineinfile:
+        path: /etc/chrony.conf
+        create: true
+        regexp: (?i)^\s*cmdport\s+
+        line: cmdport 0
+        state: present
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - '"chrony" in ansible_facts.packages'
+    tags:
+    - CCE-88876-8
+    - DISA-STIG-RHEL-09-252030
+    - NIST-800-53-CM-7(1)
+    - chronyd_no_chronyc_network
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable network management of chrony daemon'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable network management of chrony daemon'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Log USBGuard daemon audit events using Linux Audit
+    block:
+    - name: Check for duplicate values
+      ansible.builtin.lineinfile:
+        path: /etc/usbguard/usbguard-daemon.conf
+        create: true
+        regexp: (?i)^[ \\t]*AuditBackend=
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: dupes
+    - name: Deduplicate values from /etc/usbguard/usbguard-daemon.conf
+      ansible.builtin.lineinfile:
+        path: /etc/usbguard/usbguard-daemon.conf
+        create: true
+        regexp: (?i)^[ \\t]*AuditBackend=
+        state: absent
+      when: dupes.found is defined and dupes.found > 1
+    - name: Insert correct line to /etc/usbguard/usbguard-daemon.conf
+      ansible.builtin.lineinfile:
+        path: /etc/usbguard/usbguard-daemon.conf
+        create: true
+        regexp: (?i)^[ \\t]*AuditBackend=
+        line: AuditBackend=LinuxAudit
+        state: present
+    when:
+    - ( ansible_architecture != "s390x" and "kernel" in ansible_facts.packages )
+    - '"usbguard" in ansible_facts.packages'
+    tags:
+    - CCE-84206-2
+    - DISA-STIG-RHEL-09-291025
+    - NIST-800-53-AU-2
+    - NIST-800-53-CM-8(3)
+    - NIST-800-53-IA-3
+    - configure_strategy
+    - configure_usbguard_auditbackend
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Log USBGuard daemon audit events using Linux Audit'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Log USBGuard daemon audit events using Linux Audit'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Update grub defaults and the bootloader menu
+    ansible.builtin.command: /sbin/grubby --update-kernel=ALL --args="audit=1"
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - '"grub2-common" in ansible_facts.packages'
+    tags:
+    - CCE-83651-0
+    - CJIS-5.4.1.1
+    - DISA-STIG-RHEL-09-212055
+    - NIST-800-171-3.3.1
+    - NIST-800-53-AC-17(1)
+    - NIST-800-53-AU-10
+    - NIST-800-53-AU-14(1)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IR-5(1)
+    - PCI-DSS-Req-10.3
+    - PCI-DSSv4-10.7
+    - PCI-DSSv4-10.7.2
+    - grub2_audit_argument
+    - low_disruption
+    - low_severity
+    - medium_complexity
+    - reboot_required
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Update grub defaults and the bootloader menu'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Update grub defaults and the bootloader menu'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Update grub defaults and the bootloader menu
+    ansible.builtin.command: /sbin/grubby --update-kernel=ALL --args="audit_backlog_limit=8192"
+    when:
+    - '"kernel" in ansible_facts.packages'
+    - '"grub2-common" in ansible_facts.packages'
+    tags:
+    - CCE-83652-8
+    - DISA-STIG-RHEL-09-653120
+    - NIST-800-53-CM-6(a)
+    - PCI-DSSv4-10.7
+    - PCI-DSSv4-10.7.2
+    - grub2_audit_backlog_limit_argument
+    - low_disruption
+    - low_severity
+    - medium_complexity
+    - reboot_required
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Update grub defaults and the bootloader menu'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Update grub defaults and the bootloader menu'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Resolve information before writing to audit logs
+    block:
+    - name: Check for duplicate values
+      ansible.builtin.lineinfile:
+        path: /etc/audit/auditd.conf
+        create: true
+        regexp: (?i)(?i)^\s*log_format\s*=\s*
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: dupes
+    - name: Deduplicate values from /etc/audit/auditd.conf
+      ansible.builtin.lineinfile:
+        path: /etc/audit/auditd.conf
+        create: true
+        regexp: (?i)(?i)^\s*log_format\s*=\s*
+        state: absent
+      when: dupes.found is defined and dupes.found > 1
+    - name: Insert correct line to /etc/audit/auditd.conf
+      ansible.builtin.lineinfile:
+        path: /etc/audit/auditd.conf
+        create: true
+        regexp: (?i)(?i)^\s*log_format\s*=\s*
+        line: log_format = ENRICHED
+        state: present
+    when:
+    - '"audit" in ansible_facts.packages'
+    - '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-83696-5
+    - DISA-STIG-RHEL-09-653100
+    - NIST-800-53-AU-3
+    - NIST-800-53-CM-6
+    - auditd_log_format
+    - low_complexity
+    - low_disruption
+    - low_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Resolve information before writing to audit logs'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Resolve information before writing to audit logs'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'

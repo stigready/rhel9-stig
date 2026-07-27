@@ -1,0 +1,31 @@
+# Source: ComplianceAsCode/content — BSD-3-Clause
+# Phase B: severity folders Cat1/2/3 ([role-layout-redhat.md](../../docs/role-layout-redhat.md))
+---
+- name: "StigForge rhel9_stig stig \u2014 Cat1"
+  ansible.builtin.import_tasks: Cat1/main.yml
+  when: rhel9stig_cat1 | default(true) | bool
+  tags:
+  - stigforge
+  - stig
+  - cat1
+- name: "StigForge rhel9_stig stig \u2014 Cat2"
+  ansible.builtin.import_tasks: Cat2/main.yml
+  when: rhel9stig_cat2 | default(true) | bool
+  tags:
+  - stigforge
+  - stig
+  - cat2
+- name: "StigForge rhel9_stig stig \u2014 Cat3"
+  ansible.builtin.import_tasks: Cat3/main.yml
+  when: rhel9stig_cat3 | default(true) | bool
+  tags:
+  - stigforge
+  - stig
+  - cat3
+- name: "StigForge rhel9_stig stig \u2014 uncategorized"
+  ansible.builtin.import_tasks: uncategorized/main.yml
+  when: rhel9stig_cat_uncategorized | default(true) | bool
+  tags:
+  - stigforge
+  - stig
+  - uncategorized

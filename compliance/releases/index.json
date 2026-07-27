@@ -1,0 +1,7 @@
+[
+  {
+    "version": "0.1.0-pilot-review",
+    "role": "rhel9_stig",
+    "matrix_status": "green"
+  }
+]

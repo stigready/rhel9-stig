@@ -1,0 +1,450 @@
+# Source: ComplianceAsCode/content (scap-security-guide) — BSD-3-Clause
+# Imported by StigForge; cloud-breaker tasks stripped per policy/cloud-ami.yml
+---
+- block:
+  - name: Gather the package facts
+    ansible.builtin.package_facts:
+      manager: auto
+    tags:
+    - always
+  rescue:
+  - name: 'StigForge: continue after error in ''Gather the package facts'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Gather the package facts'' raised an error (module or templating) and was skipped; continuing so
+        later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Gather the package facts
+    ansible.builtin.package_facts:
+      manager: auto
+    tags:
+    - always
+  rescue:
+  - name: 'StigForge: continue after error in ''Gather the package facts'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Gather the package facts'' raised an error (module or templating) and was skipped; continuing so
+        later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Gather the service facts
+    ansible.builtin.service_facts: null
+    tags:
+    - always
+  rescue:
+  - name: 'StigForge: continue after error in ''Gather the service facts'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Gather the service facts'' raised an error (module or templating) and was skipped; continuing so
+        later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: List /etc/sysctl.d/*.conf files
+    ansible.builtin.find:
+      paths:
+      - /etc/sysctl.d/
+      - /run/sysctl.d/
+      - /usr/local/lib/sysctl.d/
+      contains: ^[\s]*net.ipv4.conf.all.log_martians.*$
+      patterns: '*.conf'
+      file_type: any
+    register: find_sysctl_d
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84000-9
+    - DISA-STIG-RHEL-09-253025
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_all_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Comment out any occurrences of net.ipv4.conf.all.log_martians from config files
+    ansible.builtin.replace:
+      path: '{{ item.path }}'
+      regexp: ^[\s]*net.ipv4.conf.all.log_martians
+      replace: '#net.ipv4.conf.all.log_martians'
+    loop: '{{ find_sysctl_d.files }}'
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84000-9
+    - DISA-STIG-RHEL-09-253025
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_all_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Comment out any occurrences of net.ipv4.conf.all.log_martians from config
+      files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Comment out any occurrences of net.ipv4.conf.all.log_martians from config files'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+- block:
+  - name: Ensure sysctl net.ipv4.conf.all.log_martians is set
+    ansible.posix.sysctl:
+      name: net.ipv4.conf.all.log_martians
+      value: '{{ sysctl_net_ipv4_conf_all_log_martians_value }}'
+      sysctl_file: /etc/sysctl.conf
+      state: present
+      reload: true
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84000-9
+    - DISA-STIG-RHEL-09-253025
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_all_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure sysctl net.ipv4.conf.all.log_martians is set'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure sysctl net.ipv4.conf.all.log_martians is set'' raised an error (module or templating) and
+        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: List /etc/sysctl.d/*.conf files
+    ansible.builtin.find:
+      paths:
+      - /etc/sysctl.d/
+      - /run/sysctl.d/
+      - /usr/local/lib/sysctl.d/
+      contains: ^[\s]*net.ipv4.conf.default.log_martians.*$
+      patterns: '*.conf'
+      file_type: any
+    register: find_sysctl_d
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84014-0
+    - DISA-STIG-RHEL-09-253030
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_default_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Comment out any occurrences of net.ipv4.conf.default.log_martians from config files
+    ansible.builtin.replace:
+      path: '{{ item.path }}'
+      regexp: ^[\s]*net.ipv4.conf.default.log_martians
+      replace: '#net.ipv4.conf.default.log_martians'
+    loop: '{{ find_sysctl_d.files }}'
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84014-0
+    - DISA-STIG-RHEL-09-253030
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_default_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Comment out any occurrences of net.ipv4.conf.default.log_martians from config
+      files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Comment out any occurrences of net.ipv4.conf.default.log_martians from config files'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+- block:
+  - name: Ensure sysctl net.ipv4.conf.default.log_martians is set
+    ansible.posix.sysctl:
+      name: net.ipv4.conf.default.log_martians
+      value: '{{ sysctl_net_ipv4_conf_default_log_martians_value }}'
+      sysctl_file: /etc/sysctl.conf
+      state: present
+      reload: true
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84014-0
+    - DISA-STIG-RHEL-09-253030
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_default_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure sysctl net.ipv4.conf.default.log_martians is set'' (OpenSCAP is the
+      score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure sysctl net.ipv4.conf.default.log_martians is set'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: List /etc/sysctl.d/*.conf files
+    ansible.builtin.find:
+      paths:
+      - /etc/sysctl.d/
+      - /run/sysctl.d/
+      - /usr/local/lib/sysctl.d/
+      contains: ^[\s]*net.ipv4.icmp_ignore_bogus_error_responses.*$
+      patterns: '*.conf'
+      file_type: any
+    register: find_sysctl_d
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84015-7
+    - DISA-STIG-RHEL-09-253060
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5
+    - PCI-DSS-Req-1.4.3
+    - PCI-DSSv4-1.4
+    - PCI-DSSv4-1.4.2
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files
+    ansible.builtin.replace:
+      path: '{{ item.path }}'
+      regexp: ^[\s]*net.ipv4.icmp_ignore_bogus_error_responses
+      replace: '#net.ipv4.icmp_ignore_bogus_error_responses'
+    loop: '{{ find_sysctl_d.files }}'
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84015-7
+    - DISA-STIG-RHEL-09-253060
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5
+    - PCI-DSS-Req-1.4.3
+    - PCI-DSSv4-1.4
+    - PCI-DSSv4-1.4.2
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses
+      from config files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files'' raised
+        an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+- block:
+  - name: Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set
+    ansible.posix.sysctl:
+      name: net.ipv4.icmp_ignore_bogus_error_responses
+      value: '{{ sysctl_net_ipv4_icmp_ignore_bogus_error_responses_value }}'
+      sysctl_file: /etc/sysctl.conf
+      state: present
+      reload: true
+    when: '"kernel" in ansible_facts.packages'
+    tags:
+    - CCE-84015-7
+    - DISA-STIG-RHEL-09-253060
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5
+    - PCI-DSS-Req-1.4.3
+    - PCI-DSSv4-1.4
+    - PCI-DSSv4-1.4.2
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: 'Add nodev Option to /home: Check information associated to mountpoint'
+    command: findmnt --fstab '/home'
+    register: device_name
+    failed_when: device_name.rc > 1
+    changed_when: false
+    when:
+    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
+      "podman", "container"] ) )
+    - '"/home" in ansible_mounts | map(attribute="mount") | list'
+    tags:
+    - CCE-83871-4
+    - DISA-STIG-RHEL-09-231045
+    - configure_strategy
+    - high_disruption
+    - low_complexity
+    - mount_option_home_nodev
+    - no_reboot_needed
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Add nodev Option to /home: Check information associated to mountpoint'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Add nodev Option to /home: Check information associated to mountpoint'' raised an error (module or
+        templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: 'Add nodev Option to /home: Create mount_info dictionary variable'
+    set_fact:
+      mount_info: '{{ mount_info|default({})|combine({item.0: item.1}) }}'
+    with_together:
+    - '{{ device_name.stdout_lines[0].split() | list | lower }}'
+    - '{{ device_name.stdout_lines[1].split() | list }}'
+    when:
+    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
+      "podman", "container"] ) )
+    - '"/home" in ansible_mounts | map(attribute="mount") | list'
+    - device_name.stdout is defined and device_name.stdout_lines is defined
+    - (device_name.stdout | length > 0)
+    tags:
+    - CCE-83871-4
+    - DISA-STIG-RHEL-09-231045
+    - configure_strategy
+    - high_disruption
+    - low_complexity
+    - mount_option_home_nodev
+    - no_reboot_needed
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Add nodev Option to /home: Create mount_info dictionary variable'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Add nodev Option to /home: Create mount_info dictionary variable'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: 'Add nodev Option to /home: If /home not mounted, craft mount_info manually'
+    set_fact:
+      mount_info: '{{ mount_info|default({})|combine({item.0: item.1}) }}'
+    with_together:
+    - - target
+      - source
+      - fstype
+      - options
+    - - /home
+      - ''
+      - ''
+      - defaults
+    when:
+    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
+      "podman", "container"] ) )
+    - '"/home" in ansible_mounts | map(attribute="mount") | list'
+    - ("--fstab" | length == 0)
+    - device_name.stdout is defined and device_name.stdout_lines is defined
+    - (device_name.stdout | length == 0)
+    tags:
+    - CCE-83871-4
+    - DISA-STIG-RHEL-09-231045
+    - configure_strategy
+    - high_disruption
+    - low_complexity
+    - mount_option_home_nodev
+    - no_reboot_needed
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Add nodev Option to /home: If /home not mounted, craft mount_info manually''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Add nodev Option to /home: If /home not mounted, craft mount_info manually'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+- block:
+  - name: 'Add nodev Option to /home: Make sure nodev option is part of the to /home options'
+    set_fact:
+      mount_info: '{{ mount_info | combine( {''options'':''''~mount_info.options~'',nodev'' }) }}'
+    when:
+    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
+      "podman", "container"] ) )
+    - '"/home" in ansible_mounts | map(attribute="mount") | list'
+    - mount_info is defined and "nodev" not in mount_info.options
+    tags:
+    - CCE-83871-4
+    - DISA-STIG-RHEL-09-231045
+    - configure_strategy
+    - high_disruption
+    - low_complexity
+    - mount_option_home_nodev
+    - no_reboot_needed
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Add nodev Option to /home: Make sure nodev option is part of the to /home
+      options'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Add nodev Option to /home: Make sure nodev option is part of the to /home options'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+- block:
+  - name: 'Add nodev Option to /home: Ensure /home is mounted with nodev option'
+    mount:
+      path: /home
+      src: '{{ mount_info.source }}'
+      opts: '{{ mount_info.options }}'
+      state: mounted
+      fstype: '{{ mount_info.fstype }}'
+    when:
+    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
+      "podman", "container"] ) )
+    - '"/home" in ansible_mounts | map(attribute="mount") | list'
+    - mount_info is defined
+    - (device_name.stdout is defined and (device_name.stdout | length > 0)) or ("--fstab" | length == 0)
+    tags:
+    - CCE-83871-4
+    - DISA-STIG-RHEL-09-231045
+    - configure_strategy
+    - high_disruption
+    - low_complexity
+    - mount_option_home_nodev
+    - no_reboot_needed
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Add nodev Option to /home: Ensure /home is mounted with nodev option'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Add nodev Option to /home: Ensure /home is mounted with nodev option'' raised an error (module or
+        templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'

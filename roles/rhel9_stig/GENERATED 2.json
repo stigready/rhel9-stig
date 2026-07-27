@@ -1,0 +1,10 @@
+{
+  "stig": {
+    "playbook": "rhel9-playbook-stig.yml",
+    "source_tasks": 1304,
+    "kept": 1235,
+    "exempt": 43,
+    "hold": 26,
+    "output": "roles/rhel9_stig/tasks/stig.yml"
+  }
+}

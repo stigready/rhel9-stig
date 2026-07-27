@@ -1,0 +1,20 @@
+---
+# Phase B pilot — lockdown-style prelude (docs/role-layout-redhat.md).
+- name: Assert supported RHEL family (RHEL / Rocky / Alma 9)
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['distribution'] in ['RedHat', 'Rocky', 'AlmaLinux']
+      - ansible_facts['distribution_major_version'] | int == 9
+    fail_msg: "rhel9_stig supports RHEL 9 family only."
+  tags: [stigforge, prelim]
+
+- name: Assert minimum Ansible version
+  ansible.builtin.assert:
+    that: ansible_version.full is version('2.16', '>=')
+    fail_msg: "Ansible 2.16+ required."
+  tags: [stigforge, prelim]
+
+- name: Detect container execution (optional skips)
+  ansible.builtin.set_fact:
+    stigforge_is_container: "{{ ansible_facts.virtualization_role | default('') == 'guest' and ansible_facts.containerization_type | default('') != '' }}"
+  tags: [stigforge, prelim]
