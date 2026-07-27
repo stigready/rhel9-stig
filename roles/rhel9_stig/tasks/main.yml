@@ -1,0 +1,10 @@
+---
+# Phase B layout v2 — prelim then profile tasks ([role-layout-redhat.md](docs/role-layout-redhat.md)).
+- name: StigForge prelim (rhel9_stig)
+  ansible.builtin.import_tasks: prelim.yml
+  tags: [stigforge, prelim, rhel9_stig]
+
+- name: "StigForge apply rhel9_stig profile {{ stigforge_profile }}"
+  ansible.builtin.import_tasks: "{{ stigforge_profile }}.yml"
+  ignore_errors: true
+  tags: [stigforge, rhel9_stig]
