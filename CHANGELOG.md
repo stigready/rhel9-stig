@@ -2,7 +2,7 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
-## [0.2.0-private-review] - export review
+## [0.2.1-private-review] - export review
 
 ### Added
 - Initial StigForge export of matrix role `rhel9_stig`.
@@ -16,5 +16,5 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 ### Provenance
 
 - Factory pipeline: https://github.com/stigready/stigforge/actions/runs/30277229616
-- Factory commit: `0a8f2cc3730d273b1ab8b1cfde1cd8ff7fe9c111`
+- Factory commit: `ccc5f55bd24b1c9cb1b8ca95a70b55443e0064b5`
 

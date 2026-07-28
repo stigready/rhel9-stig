@@ -1,6 +1,6 @@
 [
   {
-    "version": "0.2.0-private-review",
+    "version": "0.2.1-private-review",
     "role": "rhel9_stig",
     "matrix_status": "green"
   }
