@@ -22,8 +22,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Provenance
 
-- Factory pipeline: https://github.com/stigready/stigforge/actions/runs/30348467615
-- Factory commit: `49f1c019fbf7ba7f8edc345d79321ed45f9534de`
+- Factory pipeline: https://github.com/stigready/stigforge/actions/runs/30353408831
+- Factory commit: `5601d6c388051bf9f7636b086d93888a709b8b31`
 
 ## [0.2.1-private-review] - 2026-07-28
 

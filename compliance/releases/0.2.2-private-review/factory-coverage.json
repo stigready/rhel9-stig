@@ -1,8 +1,12 @@
 {
   "min_score": 90,
-  "cutover_ready": true,
+  "cutover_ready": false,
   "matrix_declared_ready": true,
-  "missing_required": [],
+  "missing_required": [
+    "ubuntu24_cis",
+    "ubuntu24_stig",
+    "rhel8_stig"
+  ],
   "cells": {
     "ubuntu24_cis": {
       "required": true,
@@ -10,14 +14,14 @@
       "role_present": true,
       "profiles": {
         "cis-l1": {
-          "pass": 171,
-          "fail": 9,
+          "pass": 149,
+          "fail": 20,
           "other": 0,
-          "total_scored": 180,
-          "score": 95.0,
+          "total_scored": 169,
+          "score": 88.17,
           "min_score": 90.0,
-          "meets_floor": true,
-          "gate_pass": true,
+          "meets_floor": false,
+          "gate_pass": false,
           "enforce": false,
           "failures": [
             "account_disable_post_pw_expiration",
@@ -26,23 +30,34 @@
             "accounts_password_pam_pwhistory_enforce_root",
             "accounts_password_pam_pwhistory_remember",
             "accounts_password_pam_pwhistory_use_authtok",
+            "accounts_password_pam_pwquality_enabled",
             "accounts_passwords_pam_faillock_deny",
             "accounts_passwords_pam_faillock_enabled",
-            "accounts_passwords_pam_faillock_unlock_time"
+            "accounts_passwords_pam_faillock_unlock_time",
+            "accounts_umask_etc_bashrc",
+            "accounts_umask_etc_login_defs",
+            "accounts_umask_etc_profile",
+            "disable_users_coredumps",
+            "ensure_pam_wheel_group_empty",
+            "file_permission_user_init_files",
+            "file_permissions_ungroupowned",
+            "package_pam_pwquality_installed",
+            "permissions_local_var_log",
+            "use_pam_wheel_group_for_su"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=171 fail=9 score=95.0% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=149 fail=20 score=88.2% (target 90%)"
         },
         "cis-l2": {
-          "pass": 174,
-          "fail": 11,
+          "pass": 152,
+          "fail": 22,
           "other": 0,
-          "total_scored": 185,
-          "score": 94.05,
+          "total_scored": 174,
+          "score": 87.36,
           "min_score": 90.0,
-          "meets_floor": true,
-          "gate_pass": true,
+          "meets_floor": false,
+          "gate_pass": false,
           "enforce": false,
           "failures": [
             "account_disable_post_pw_expiration",
@@ -52,17 +67,28 @@
             "accounts_password_pam_pwhistory_enforce_root",
             "accounts_password_pam_pwhistory_remember",
             "accounts_password_pam_pwhistory_use_authtok",
+            "accounts_password_pam_pwquality_enabled",
             "accounts_passwords_pam_faillock_deny",
             "accounts_passwords_pam_faillock_enabled",
             "accounts_passwords_pam_faillock_root_unlock_time",
-            "accounts_passwords_pam_faillock_unlock_time"
+            "accounts_passwords_pam_faillock_unlock_time",
+            "accounts_umask_etc_bashrc",
+            "accounts_umask_etc_login_defs",
+            "accounts_umask_etc_profile",
+            "disable_users_coredumps",
+            "ensure_pam_wheel_group_empty",
+            "file_permission_user_init_files",
+            "file_permissions_ungroupowned",
+            "package_pam_pwquality_installed",
+            "permissions_local_var_log",
+            "use_pam_wheel_group_for_su"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=174 fail=11 score=94.1% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=152 fail=22 score=87.4% (target 90%)"
         }
       },
-      "green": true
+      "green": false
     },
     "ubuntu24_stig": {
       "required": true,
@@ -70,24 +96,42 @@
       "role_present": true,
       "profiles": {
         "stig": {
-          "pass": 51,
-          "fail": 1,
+          "pass": 24,
+          "fail": 19,
           "other": 3,
-          "total_scored": 52,
-          "score": 98.08,
+          "total_scored": 43,
+          "score": 55.81,
           "min_score": 90.0,
-          "meets_floor": true,
-          "gate_pass": true,
+          "meets_floor": false,
+          "gate_pass": false,
           "enforce": false,
           "failures": [
-            "banner_etc_profiled_ssh_confirm"
+            "account_disable_post_pw_expiration",
+            "accounts_max_concurrent_login_sessions",
+            "accounts_maximum_age_login_defs",
+            "accounts_minimum_age_login_defs",
+            "accounts_password_pam_unix_rounds_password_auth",
+            "accounts_passwords_pam_faildelay_delay",
+            "accounts_passwords_pam_faillock_audit",
+            "accounts_passwords_pam_faillock_deny",
+            "accounts_passwords_pam_faillock_interval",
+            "accounts_passwords_pam_faillock_silent",
+            "accounts_passwords_pam_faillock_unlock_time",
+            "accounts_umask_etc_login_defs",
+            "banner_etc_profiled_ssh_confirm",
+            "clean_components_post_updating",
+            "display_login_attempts",
+            "file_groupowner_var_log",
+            "file_permissions_var_log_stig",
+            "package_pam_pwquality_installed",
+            "set_password_hashing_algorithm_auth_stig"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=51 fail=1 score=98.1% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=24 fail=19 score=55.8% (target 90%)"
         }
       },
-      "green": true
+      "green": false
     },
     "rhel8_cis": {
       "required": true,
@@ -95,39 +139,49 @@
       "role_present": true,
       "profiles": {
         "cis-l1": {
-          "pass": 85,
-          "fail": 1,
+          "pass": 80,
+          "fail": 6,
           "other": 0,
           "total_scored": 86,
-          "score": 98.84,
+          "score": 93.02,
           "min_score": 90.0,
           "meets_floor": true,
           "gate_pass": true,
           "enforce": true,
           "failures": [
-            "configure_custom_crypto_policy_cis"
+            "accounts_password_pam_modules_in_authselect_profile",
+            "accounts_umask_etc_bashrc",
+            "accounts_umask_etc_profile",
+            "configure_custom_crypto_policy_cis",
+            "no_files_or_dirs_ungroupowned",
+            "use_pam_wheel_group_for_su"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=85 fail=1 score=98.8% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=80 fail=6 score=93.0% (target 90%)"
         },
         "cis-l2": {
-          "pass": 88,
-          "fail": 2,
+          "pass": 83,
+          "fail": 7,
           "other": 0,
           "total_scored": 90,
-          "score": 97.78,
+          "score": 92.22,
           "min_score": 90.0,
           "meets_floor": true,
           "gate_pass": true,
           "enforce": true,
           "failures": [
+            "accounts_password_pam_modules_in_authselect_profile",
+            "accounts_umask_etc_bashrc",
+            "accounts_umask_etc_profile",
             "configure_custom_crypto_policy_cis",
-            "disable_weak_deps"
+            "disable_weak_deps",
+            "no_files_or_dirs_ungroupowned",
+            "use_pam_wheel_group_for_su"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=88 fail=2 score=97.8% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=83 fail=7 score=92.2% (target 90%)"
         }
       },
       "green": true
@@ -138,25 +192,29 @@
       "role_present": true,
       "profiles": {
         "stig": {
-          "pass": 47,
-          "fail": 2,
+          "pass": 43,
+          "fail": 6,
           "other": 1,
           "total_scored": 49,
-          "score": 95.92,
+          "score": 87.76,
           "min_score": 90.0,
-          "meets_floor": true,
-          "gate_pass": true,
+          "meets_floor": false,
+          "gate_pass": false,
           "enforce": false,
           "failures": [
             "configure_crypto_policy",
-            "network_configure_name_resolution"
+            "ensure_gpgcheck_local_packages",
+            "file_permission_user_init_files_root",
+            "file_permissions_ungroupowned",
+            "network_configure_name_resolution",
+            "rootfiles_configured"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=47 fail=2 score=95.9% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=43 fail=6 score=87.8% (target 90%)"
         }
       },
-      "green": true
+      "green": false
     },
     "rhel9_cis": {
       "required": true,
@@ -164,38 +222,40 @@
       "role_present": true,
       "profiles": {
         "cis-l1": {
-          "pass": 74,
-          "fail": 1,
+          "pass": 73,
+          "fail": 2,
           "other": 0,
           "total_scored": 75,
-          "score": 98.67,
+          "score": 97.33,
           "min_score": 90.0,
           "meets_floor": true,
           "gate_pass": true,
           "enforce": true,
           "failures": [
-            "configure_custom_crypto_policy_cis"
+            "configure_custom_crypto_policy_cis",
+            "file_permissions_ungroupowned"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=74 fail=1 score=98.7% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=73 fail=2 score=97.3% (target 90%)"
         },
         "cis-l2": {
-          "pass": 76,
-          "fail": 1,
+          "pass": 75,
+          "fail": 2,
           "other": 0,
           "total_scored": 77,
-          "score": 98.7,
+          "score": 97.4,
           "min_score": 90.0,
           "meets_floor": true,
           "gate_pass": true,
           "enforce": true,
           "failures": [
-            "configure_custom_crypto_policy_cis"
+            "configure_custom_crypto_policy_cis",
+            "file_permissions_ungroupowned"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=76 fail=1 score=98.7% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=75 fail=2 score=97.4% (target 90%)"
         }
       },
       "green": true
@@ -232,41 +292,48 @@
       "role_present": true,
       "profiles": {
         "cis-l1": {
-          "pass": 79,
-          "fail": 2,
+          "pass": 69,
+          "fail": 6,
           "other": 0,
-          "total_scored": 81,
-          "score": 97.53,
+          "total_scored": 75,
+          "score": 92.0,
           "min_score": 90.0,
           "meets_floor": true,
           "gate_pass": true,
           "enforce": true,
           "failures": [
+            "accounts_password_pam_modules_in_authselect_profile",
+            "accounts_umask_etc_bashrc",
+            "accounts_umask_etc_profile",
             "configure_custom_crypto_policy_cis",
+            "file_permissions_ungroupowned",
             "use_pam_wheel_group_for_su"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=79 fail=2 score=97.5% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=69 fail=6 score=92.0% (target 90%)"
         },
         "cis-l2": {
-          "pass": 82,
-          "fail": 3,
+          "pass": 71,
+          "fail": 6,
           "other": 0,
-          "total_scored": 85,
-          "score": 96.47,
+          "total_scored": 77,
+          "score": 92.21,
           "min_score": 90.0,
           "meets_floor": true,
           "gate_pass": true,
           "enforce": true,
           "failures": [
+            "accounts_password_pam_modules_in_authselect_profile",
+            "accounts_umask_etc_bashrc",
+            "accounts_umask_etc_profile",
             "configure_custom_crypto_policy_cis",
-            "disable_weak_deps",
+            "file_permissions_ungroupowned",
             "use_pam_wheel_group_for_su"
           ],
           "regressions": [],
           "baseline": null,
-          "openscap_line": "OpenSCAP: pass=82 fail=3 score=96.5% (target 90%)"
+          "openscap_line": "OpenSCAP: pass=71 fail=6 score=92.2% (target 90%)"
         }
       },
       "green": true

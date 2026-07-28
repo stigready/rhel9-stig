@@ -1,26 +1,33 @@
 galaxy_info:
   role_name: rhel9_stig
   namespace: stigready
-  description: "StigForge-owned rhel9_stig \u2014 ComplianceAsCode/SSG ansible remediation\
-    \ (BSD-3-Clause), cloud-tailored, verified by OpenSCAP.\n"
+  description: Ansible role for RHEL 9 DISA STIG hardening (stig). ComplianceAsCode/SSG
+    remediation, OpenSCAP-verified in StigForge CI. Install with ansible-galaxy or
+    git.
   license: BSD-3-Clause
   min_ansible_version: '2.16'
   platforms:
   - name: EL
     versions:
-    - '8'
     - '9'
-    - '10'
-  - name: Ubuntu
-    versions:
-    - '24.04'
   author: stigready
+  company: StigReady
   galaxy_tags:
+  - ansible
+  - ansible-role
   - compliance
+  - devsecops
+  - disa
+  - disa-stig
   - hardening
+  - infrastructure
   - openscap
+  - redhat
   - rhel
+  - rhel9
   - security
   - stig
   - stigforge
+  github_branch: main
+  issue_tracker_url: https://github.com/stigready/rhel9-stig/issues
 dependencies: []

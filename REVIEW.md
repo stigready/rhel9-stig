@@ -10,4 +10,4 @@ Product owner review (Phase B/C pilot). **Not** a StigApplied cutover signal.
 - [evidence.json](compliance/releases/0.2.2-private-review/stig/evidence.json) · [evidence-report.html](compliance/releases/0.2.2-private-review/stig/evidence-report.html)
 - [score.json](compliance/releases/0.2.2-private-review/stig/score.json) · [report.html](compliance/releases/0.2.2-private-review/stig/report.html) · [poam.md](compliance/releases/0.2.2-private-review/stig/poam.md)
 
-- CI pipeline: https://github.com/stigready/stigforge/actions/runs/30348467615
+- CI pipeline: https://github.com/stigready/stigforge/actions/runs/30353408831
