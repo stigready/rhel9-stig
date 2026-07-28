@@ -1,5 +1,16 @@
-# Customer role repo — run OpenSCAP prove for a pinned release (Phase C).
-.PHONY: prove
+# Customer role repo — OpenSCAP prove + score check
+.PHONY: prove score-results help
+
+help:
+	@echo "Targets:"
+	@echo "  make prove RELEASE=<ver>     Docker reprove (apply role + OpenSCAP + compare to evidence)"
+	@echo "  make score-results RESULTS=<path> PROFILE=<prof>   Score a results.xml using factory rules"
+
 prove:
-	@test -n "$(RELEASE)" || (echo "RELEASE= semver folder under compliance/releases/" && exit 1)
-	@echo "prove: use compliance/verify.yml with RELEASE=$(RELEASE) (wire in Phase C phase 5)"
+	@test -n "$(RELEASE)" || (echo "RELEASE= required (folder under compliance/releases/)" && exit 1)
+	@./scripts/prove.sh
+
+score-results:
+	@test -n "$(RESULTS)" || (echo "RESULTS= path to OpenSCAP results.xml required" && exit 1)
+	@test -n "$(PROFILE)" || (echo "PROFILE= required (e.g. stig, cis-l1)" && exit 1)
+	@python3 scripts/score-results.py --results "$(RESULTS)" --profile "$(PROFILE)" --verify-json compliance/verify.json

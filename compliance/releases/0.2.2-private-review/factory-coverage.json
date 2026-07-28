@@ -1,0 +1,300 @@
+{
+  "min_score": 90,
+  "cutover_ready": true,
+  "matrix_declared_ready": true,
+  "missing_required": [],
+  "cells": {
+    "ubuntu24_cis": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "cis-l1": {
+          "pass": 171,
+          "fail": 9,
+          "other": 0,
+          "total_scored": 180,
+          "score": 95.0,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": false,
+          "failures": [
+            "account_disable_post_pw_expiration",
+            "accounts_maximum_age_login_defs",
+            "accounts_password_pam_pwhistory_enabled",
+            "accounts_password_pam_pwhistory_enforce_root",
+            "accounts_password_pam_pwhistory_remember",
+            "accounts_password_pam_pwhistory_use_authtok",
+            "accounts_passwords_pam_faillock_deny",
+            "accounts_passwords_pam_faillock_enabled",
+            "accounts_passwords_pam_faillock_unlock_time"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=171 fail=9 score=95.0% (target 90%)"
+        },
+        "cis-l2": {
+          "pass": 174,
+          "fail": 11,
+          "other": 0,
+          "total_scored": 185,
+          "score": 94.05,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": false,
+          "failures": [
+            "account_disable_post_pw_expiration",
+            "accounts_maximum_age_login_defs",
+            "accounts_minimum_age_login_defs",
+            "accounts_password_pam_pwhistory_enabled",
+            "accounts_password_pam_pwhistory_enforce_root",
+            "accounts_password_pam_pwhistory_remember",
+            "accounts_password_pam_pwhistory_use_authtok",
+            "accounts_passwords_pam_faillock_deny",
+            "accounts_passwords_pam_faillock_enabled",
+            "accounts_passwords_pam_faillock_root_unlock_time",
+            "accounts_passwords_pam_faillock_unlock_time"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=174 fail=11 score=94.1% (target 90%)"
+        }
+      },
+      "green": true
+    },
+    "ubuntu24_stig": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "stig": {
+          "pass": 51,
+          "fail": 1,
+          "other": 3,
+          "total_scored": 52,
+          "score": 98.08,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": false,
+          "failures": [
+            "banner_etc_profiled_ssh_confirm"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=51 fail=1 score=98.1% (target 90%)"
+        }
+      },
+      "green": true
+    },
+    "rhel8_cis": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "cis-l1": {
+          "pass": 85,
+          "fail": 1,
+          "other": 0,
+          "total_scored": 86,
+          "score": 98.84,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": true,
+          "failures": [
+            "configure_custom_crypto_policy_cis"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=85 fail=1 score=98.8% (target 90%)"
+        },
+        "cis-l2": {
+          "pass": 88,
+          "fail": 2,
+          "other": 0,
+          "total_scored": 90,
+          "score": 97.78,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": true,
+          "failures": [
+            "configure_custom_crypto_policy_cis",
+            "disable_weak_deps"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=88 fail=2 score=97.8% (target 90%)"
+        }
+      },
+      "green": true
+    },
+    "rhel8_stig": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "stig": {
+          "pass": 47,
+          "fail": 2,
+          "other": 1,
+          "total_scored": 49,
+          "score": 95.92,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": false,
+          "failures": [
+            "configure_crypto_policy",
+            "network_configure_name_resolution"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=47 fail=2 score=95.9% (target 90%)"
+        }
+      },
+      "green": true
+    },
+    "rhel9_cis": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "cis-l1": {
+          "pass": 74,
+          "fail": 1,
+          "other": 0,
+          "total_scored": 75,
+          "score": 98.67,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": true,
+          "failures": [
+            "configure_custom_crypto_policy_cis"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=74 fail=1 score=98.7% (target 90%)"
+        },
+        "cis-l2": {
+          "pass": 76,
+          "fail": 1,
+          "other": 0,
+          "total_scored": 77,
+          "score": 98.7,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": true,
+          "failures": [
+            "configure_custom_crypto_policy_cis"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=76 fail=1 score=98.7% (target 90%)"
+        }
+      },
+      "green": true
+    },
+    "rhel9_stig": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "stig": {
+          "pass": 68,
+          "fail": 2,
+          "other": 1,
+          "total_scored": 70,
+          "score": 97.14,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": true,
+          "failures": [
+            "file_permissions_ungroupowned",
+            "network_configure_name_resolution"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=68 fail=2 score=97.1% (target 90%)"
+        }
+      },
+      "green": true
+    },
+    "rhel10_cis": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "cis-l1": {
+          "pass": 79,
+          "fail": 2,
+          "other": 0,
+          "total_scored": 81,
+          "score": 97.53,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": true,
+          "failures": [
+            "configure_custom_crypto_policy_cis",
+            "use_pam_wheel_group_for_su"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=79 fail=2 score=97.5% (target 90%)"
+        },
+        "cis-l2": {
+          "pass": 82,
+          "fail": 3,
+          "other": 0,
+          "total_scored": 85,
+          "score": 96.47,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": true,
+          "failures": [
+            "configure_custom_crypto_policy_cis",
+            "disable_weak_deps",
+            "use_pam_wheel_group_for_su"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=82 fail=3 score=96.5% (target 90%)"
+        }
+      },
+      "green": true
+    },
+    "rhel10_stig": {
+      "required": true,
+      "matrix_status": "green",
+      "role_present": true,
+      "profiles": {
+        "stig": {
+          "pass": 69,
+          "fail": 1,
+          "other": 0,
+          "total_scored": 70,
+          "score": 98.57,
+          "min_score": 90.0,
+          "meets_floor": true,
+          "gate_pass": true,
+          "enforce": false,
+          "failures": [
+            "network_configure_name_resolution"
+          ],
+          "regressions": [],
+          "baseline": null,
+          "openscap_line": "OpenSCAP: pass=69 fail=1 score=98.6% (target 90%)"
+        }
+      },
+      "green": true
+    }
+  }
+}
