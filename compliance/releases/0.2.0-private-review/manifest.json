@@ -1,0 +1,8 @@
+{
+  "role": "rhel9_stig",
+  "version": "0.2.0-private-review",
+  "factory_repo": "stigready/stigforge",
+  "matrix_status": "green",
+  "pipeline_run_id": "30277229616",
+  "factory_commit": "0a8f2cc3730d273b1ab8b1cfde1cd8ff7fe9c111"
+}
