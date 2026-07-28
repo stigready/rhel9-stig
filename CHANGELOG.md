@@ -2,19 +2,36 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
-## [0.2.2-private-review] - export review
+## [0.2.2-private-review] - 2026-07-28
 
 ### Added
-- Initial StigForge export of matrix role `rhel9_stig`.
-- OpenSCAP verify evidence bundles per profile under `compliance/releases/`.
+- Customer verify path: `make prove`, `compliance/verify.json`, `scripts/score-results.py`.
 
-### Verified (CI)
+### Changed
+- README and this changelog list current OpenSCAP verify scores (≥90% floor).
+- All CIS/STIG profiles apply SSG remediation via `stigforge_profile` task includes.
+- Matrix cell `rhel9_stig` marked **green** with passing docker verify evidence.
+
+### Fixed
+- CIS/STIG roles no longer point at empty `rules.yml` scaffold (remediation runs in verify).
+
+### Verified (OpenSCAP)
 
 - **`stig`** — score **97.14%** (floor 90.0%) · gate **PASS** · evidence `20260726T140216Z`
-  - OpenSCAP failures still counted: `file_permissions_ungroupowned, network_configure_name_resolution`
+  - Remaining counted failures: `file_permissions_ungroupowned, network_configure_name_resolution`
 
 ### Provenance
 
 - Factory pipeline: https://github.com/stigready/stigforge/actions/runs/30348467615
 - Factory commit: `49f1c019fbf7ba7f8edc345d79321ed45f9534de`
 
+## [0.2.1-private-review] - 2026-07-28
+
+### Changed
+- Galaxy-style layout: Ansible role at repository root; evidence under `compliance/`.
+- Private review tag `v0.2.1-private-review` (supersedes nested `roles/<role>/` export).
+
+## [0.2.0-private-review] - 2026-07-26
+
+### Added
+- First private StigForge export to `stigready/*` (factory review; nested role path).
