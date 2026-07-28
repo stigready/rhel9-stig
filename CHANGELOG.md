@@ -16,5 +16,5 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 ### Provenance
 
 - Factory pipeline: https://github.com/stigready/stigforge/actions/runs/30277229616
-- Factory commit: `ccc5f55bd24b1c9cb1b8ca95a70b55443e0064b5`
+- Factory commit: `f0323b6e2f0f36a0418447b9859a0576278541b8`
 

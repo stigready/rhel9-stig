@@ -45,7 +45,7 @@ Full artifacts per profile: `compliance/releases/0.2.1-private-review/<profile>/
 
 ## Factory
 
-- Monorepo: [stigready/stigforge](https://github.com/stigready/stigforge) @ `ccc5f55bd24b1c9cb1b8ca95a70b55443e0064b5`
+- Monorepo: [stigready/stigforge](https://github.com/stigready/stigforge) @ `f0323b6e2f0f36a0418447b9859a0576278541b8`
 - CI run: https://github.com/stigready/stigforge/actions/runs/30277229616
 - Catalog: [https://stigready.com/#stigforge](https://stigready.com/#stigforge)
 
