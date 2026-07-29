@@ -1,15 +1,15 @@
 {
   "role_name": "rhel9_stig",
-  "release": "0.2.2-private-review",
+  "release": "0.2.3-private-review",
   "min_score": 90.0,
   "family": "rhel",
   "docker_image_tag": "stigready-prove-rhel9_stig",
-  "factory_commit": "5601d6c388051bf9f7636b086d93888a709b8b31",
+  "factory_commit": "e8e323a3af3258bee63ebc1a873ba26c0cc12049",
   "profiles": {
     "stig": {
       "xccdf_profile_id": "xccdf_org.ssgproject.content_profile_stig",
       "ssg_datastream": "ssg-rl9-ds.xml",
-      "evidence_dir": "compliance/releases/0.2.2-private-review/stig"
+      "evidence_dir": "compliance/releases/0.2.3-private-review/stig"
     }
   },
   "exempt_rules_file": "compliance/exempt-rules.txt"
