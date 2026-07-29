@@ -12,6 +12,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Gather the package facts'' raised an error (module or templating) and was skipped; continuing so
         later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_always | default(true) | bool)
 - block:
   - name: Gather the package facts
     ansible.builtin.package_facts:
@@ -23,6 +24,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Gather the package facts'' raised an error (module or templating) and was skipped; continuing so
         later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_always | default(true) | bool)
 - block:
   - name: Gather the service facts
     ansible.builtin.service_facts: null
@@ -33,6 +35,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Gather the service facts'' raised an error (module or templating) and was skipped; continuing so
         later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_always | default(true) | bool)
 - block:
   - name: List /etc/sysctl.d/*.conf files
     ansible.builtin.find:
@@ -63,6 +66,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
+    | bool)
 - block:
   - name: Comment out any occurrences of net.ipv4.conf.all.log_martians from config files
     ansible.builtin.replace:
@@ -91,6 +96,8 @@
       msg: 'StigForge: ''Comment out any occurrences of net.ipv4.conf.all.log_martians from config files'' raised an error
         (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
         state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
+    | bool)
 - block:
   - name: Ensure sysctl net.ipv4.conf.all.log_martians is set
     ansible.posix.sysctl:
@@ -119,6 +126,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure sysctl net.ipv4.conf.all.log_martians is set'' raised an error (module or templating) and
         was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
+    | bool)
 - block:
   - name: List /etc/sysctl.d/*.conf files
     ansible.builtin.find:
@@ -149,6 +158,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
+    | bool)
 - block:
   - name: Comment out any occurrences of net.ipv4.conf.default.log_martians from config files
     ansible.builtin.replace:
@@ -177,6 +188,8 @@
       msg: 'StigForge: ''Comment out any occurrences of net.ipv4.conf.default.log_martians from config files'' raised an error
         (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
         state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
+    | bool)
 - block:
   - name: Ensure sysctl net.ipv4.conf.default.log_martians is set
     ansible.posix.sysctl:
@@ -205,6 +218,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure sysctl net.ipv4.conf.default.log_martians is set'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
+    | bool)
 - block:
   - name: List /etc/sysctl.d/*.conf files
     ansible.builtin.find:
@@ -238,6 +253,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    | default(true) | bool)
 - block:
   - name: Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files
     ansible.builtin.replace:
@@ -269,6 +286,8 @@
       msg: 'StigForge: ''Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files'' raised
         an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    | default(true) | bool)
 - block:
   - name: Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set
     ansible.posix.sysctl:
@@ -300,6 +319,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    | default(true) | bool)
 - block:
   - name: 'Add nodev Option to /home: Check information associated to mountpoint'
     command: findmnt --fstab '/home'
@@ -326,6 +347,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Add nodev Option to /home: Check information associated to mountpoint'' raised an error (module or
         templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_mount_option_home_nodev | default(true) | bool)
 - block:
   - name: 'Add nodev Option to /home: Create mount_info dictionary variable'
     set_fact:
@@ -355,6 +377,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Add nodev Option to /home: Create mount_info dictionary variable'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_mount_option_home_nodev | default(true) | bool)
 - block:
   - name: 'Add nodev Option to /home: If /home not mounted, craft mount_info manually'
     set_fact:
@@ -392,6 +415,7 @@
       msg: 'StigForge: ''Add nodev Option to /home: If /home not mounted, craft mount_info manually'' raised an error (module
         or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
         independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_mount_option_home_nodev | default(true) | bool)
 - block:
   - name: 'Add nodev Option to /home: Make sure nodev option is part of the to /home options'
     set_fact:
@@ -418,6 +442,7 @@
       msg: 'StigForge: ''Add nodev Option to /home: Make sure nodev option is part of the to /home options'' raised an error
         (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
         state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_mount_option_home_nodev | default(true) | bool)
 - block:
   - name: 'Add nodev Option to /home: Ensure /home is mounted with nodev option'
     mount:
@@ -448,3 +473,150 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Add nodev Option to /home: Ensure /home is mounted with nodev option'' raised an error (module or
         templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_mount_option_home_nodev | default(true) | bool)
+- block:
+  - name: Ensure GPG check enabled for local packages (dnf)
+    community.general.ini_file:
+      dest: /etc/dnf/dnf.conf
+      section: main
+      option: localpkg_gpgcheck
+      value: '1'
+      no_extra_spaces: true
+      create: true
+    tags:
+    - ensure_gpgcheck_local_packages
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure GPG check enabled for local packages (dnf)'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure GPG check enabled for local packages (dnf)'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_gpgcheck_local_packages | default(true) | bool)
+- block:
+  - name: Use files-only host resolution when DNS is not configured (STIG name resolution)
+    ansible.builtin.lineinfile:
+      path: /etc/nsswitch.conf
+      regexp: '^hosts:'
+      line: 'hosts:      files myhostname'
+    tags:
+    - network_configure_name_resolution
+  rescue:
+  - name: 'StigForge: continue after error in ''Use files-only host resolution when DNS is not configured (STIG name resolution)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Use files-only host resolution when DNS is not configured (STIG name resolution)'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_network_configure_name_resolution | default(true)
+    | bool)
+- block:
+  - name: Empty resolv.conf when nsswitch does not use DNS
+    ansible.builtin.copy:
+      dest: /etc/resolv.conf
+      content: ''
+      owner: root
+      group: root
+      mode: '0644'
+      force: true
+    tags:
+    - network_configure_name_resolution
+  rescue:
+  - name: 'StigForge: continue after error in ''Empty resolv.conf when nsswitch does not use DNS'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Empty resolv.conf when nsswitch does not use DNS'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_network_configure_name_resolution | default(true)
+    | bool)
+- block:
+  - name: Find ungrouped files on local mounts (verify scope)
+    ansible.builtin.shell: "set -euo pipefail\nmounts=\"$(findmnt -n -l -k -it \"$(awk '/nodev/ { print $2 }' /proc/filesystems\
+      \ | paste -sd,)\" -o TARGET 2>/dev/null || true)\"\nfor mp in $mounts; do\n  find \"$mp\" -xdev -nogroup 2>/dev/null\
+      \ || true\ndone\n"
+    register: stigforge_nogroup_files
+    changed_when: false
+    tags:
+    - file_permissions_ungroupowned
+  rescue:
+  - name: 'StigForge: continue after error in ''Find ungrouped files on local mounts (verify scope)'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Find ungrouped files on local mounts (verify scope)'' raised an error (module or templating) and
+        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_file_permissions_ungroupowned | default(true) | bool)
+- block:
+  - name: Assign root group to ungrouped files
+    ansible.builtin.file:
+      path: '{{ item }}'
+      group: root
+    loop: '{{ stigforge_nogroup_files.stdout_lines | select(''match'', ''.+'') | list }}'
+    when: stigforge_nogroup_files.stdout_lines | length > 0
+    tags:
+    - file_permissions_ungroupowned
+  rescue:
+  - name: 'StigForge: continue after error in ''Assign root group to ungrouped files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Assign root group to ungrouped files'' raised an error (module or templating) and was skipped; continuing
+        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_file_permissions_ungroupowned | default(true) | bool)
+- block:
+  - name: Ensure rootfiles package is installed (rootfiles_configured prerequisite)
+    ansible.builtin.package:
+      name: rootfiles
+      state: present
+    tags:
+    - rootfiles_configured
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure rootfiles package is installed (rootfiles_configured prerequisite)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure rootfiles package is installed (rootfiles_configured prerequisite)'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rootfiles_configured | default(true) | bool)
+- block:
+  - name: Set default umask in /etc/bashrc (accounts_umask_etc_bashrc)
+    ansible.builtin.lineinfile:
+      path: /etc/bashrc
+      regexp: ^\s*umask\s+
+      line: umask 077
+      state: present
+    tags:
+    - accounts_umask_etc_bashrc
+  rescue:
+  - name: 'StigForge: continue after error in ''Set default umask in /etc/bashrc (accounts_umask_etc_bashrc)'' (OpenSCAP is
+      the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Set default umask in /etc/bashrc (accounts_umask_etc_bashrc)'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_umask_etc_bashrc | default(true) | bool)
+- block:
+  - name: Ensure wheel group exists for su restriction (use_pam_wheel_for_su)
+    ansible.builtin.group:
+      name: wheel
+      state: present
+    tags:
+    - use_pam_wheel_for_su
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure wheel group exists for su restriction (use_pam_wheel_for_su)'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure wheel group exists for su restriction (use_pam_wheel_for_su)'' raised an error (module or
+        templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_use_pam_wheel_for_su | default(true) | bool)
+- block:
+  - name: Require wheel group membership for su (use_pam_wheel_for_su)
+    ansible.builtin.lineinfile:
+      path: /etc/pam.d/su
+      regexp: ^\s*auth\s+required\s+pam_wheel\.so
+      line: auth             required        pam_wheel.so use_uid
+      state: present
+    tags:
+    - use_pam_wheel_for_su
+  rescue:
+  - name: 'StigForge: continue after error in ''Require wheel group membership for su (use_pam_wheel_for_su)'' (OpenSCAP is
+      the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Require wheel group membership for su (use_pam_wheel_for_su)'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_use_pam_wheel_for_su | default(true) | bool)

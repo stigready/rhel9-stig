@@ -41,6 +41,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure policycoreutils is installed'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_package_policycoreutils_installed | default(true)
+    | bool)
 - block:
   - name: 'Uninstall nfs-utils Package: Ensure nfs-utils is removed'
     ansible.builtin.package:
@@ -90,6 +92,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Get rules groups'' raised an error (module or templating) and was skipped; continuing so later rules
         still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_aide_verify_acls | default(true) | bool)
 - block:
   - name: Ensure the acl rule is present when aide is installed.
     ansible.builtin.replace:
@@ -118,6 +121,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure the acl rule is present when aide is installed.'' raised an error (module or templating) and
         was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_aide_verify_acls | default(true) | bool)
 - block:
   - name: Get rules groups
     ansible.builtin.shell: 'set -o pipefail
@@ -147,6 +151,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Get rules groups'' raised an error (module or templating) and was skipped; continuing so later rules
         still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_aide_verify_ext_attributes | default(true) | bool)
 - block:
   - name: Ensure the xattrs rule is present when aide is installed.
     ansible.builtin.replace:
@@ -175,6 +180,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure the xattrs rule is present when aide is installed.'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_aide_verify_ext_attributes | default(true) | bool)
 - block:
   - name: Disable GNOME3 Automounting - autorun-never
     community.general.ini_file:
@@ -204,6 +210,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable GNOME3 Automounting - autorun-never'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_autorun | default(true) | bool)
 - block:
   - name: Prevent user modification of GNOME3 Automounting - autorun-never
     ansible.builtin.lineinfile:
@@ -232,6 +239,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Prevent user modification of GNOME3 Automounting - autorun-never'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_autorun | default(true) | bool)
 - block:
   - name: Dconf Update
     ansible.builtin.command: dconf update
@@ -255,6 +263,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Dconf Update'' raised an error (module or templating) and was skipped; continuing so later rules
         still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_autorun | default(true) | bool)
 - block:
   - name: Ensure dnf Removes Previous Package Versions - Ensure DNF Removes Previous Package Versions
     ansible.builtin.lineinfile:
@@ -285,6 +294,7 @@
       msg: 'StigForge: ''Ensure dnf Removes Previous Package Versions - Ensure DNF Removes Previous Package Versions'' raised
         an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_clean_components_post_updating | default(true) | bool)
 - block:
   - name: Ensure PAM Displays Last Logon/Access Notification - Check if system relies on authselect tool
     ansible.builtin.stat:
@@ -314,6 +324,7 @@
       msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Check if system relies on authselect tool''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_display_login_attempts | default(true) | bool)
 - block:
   - name: Ensure PAM Displays Last Logon/Access Notification - Collect the Available authselect Features
     ansible.builtin.command:
@@ -347,6 +358,7 @@
       msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Collect the Available authselect Features''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_display_login_attempts | default(true) | bool)
 - block:
   - name: Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so Using authselect Feature
     block:
@@ -419,6 +431,7 @@
       msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so Using authselect Feature''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_display_login_attempts | default(true) | bool)
 - block:
   - name: Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so in appropriate PAM files
     block:
@@ -670,6 +683,7 @@
       msg: 'StigForge: ''Ensure PAM Displays Last Logon/Access Notification - Configure pam_lastlog.so in appropriate PAM
         files'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
         the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_display_login_attempts | default(true) | bool)
 - block:
   - name: Find /etc/security/limits.d files containing maxlogins configuration
     ansible.builtin.find:
@@ -696,6 +710,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Find /etc/security/limits.d files containing maxlogins configuration'' raised an error (module or
         templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_max_concurrent_login_sessions | default(true)
+    | bool)
 - block:
   - name: Limit the Number of Concurrent Login Sessions Allowed Per User in files from limits.d
     ansible.builtin.replace:
@@ -724,6 +740,8 @@
       msg: 'StigForge: ''Limit the Number of Concurrent Login Sessions Allowed Per User in files from limits.d'' raised an
         error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_max_concurrent_login_sessions | default(true)
+    | bool)
 - block:
   - name: Limit the Number of Concurrent Login Sessions Allowed Per User
     ansible.builtin.lineinfile:
@@ -754,6 +772,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Limit the Number of Concurrent Login Sessions Allowed Per User'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_max_concurrent_login_sessions | default(true)
+    | bool)
 - block:
   - name: Update grub defaults and the bootloader menu
     ansible.builtin.command: /sbin/grubby --update-kernel=ALL --args="pti=on"
@@ -773,6 +793,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Update grub defaults and the bootloader menu'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_grub2_pti_argument | default(true) | bool)
 - block:
   - name: Ensure kernel module 'firewire-core' is disabled
     ansible.builtin.lineinfile:
@@ -846,6 +867,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: "Ensure kernel module ''tipc'' is disabled" raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_kernel_module_tipc_disabled | default(true) | bool)
 - block:
   - name: Ensure kernel module 'tipc' is blacklisted
     ansible.builtin.lineinfile:
@@ -871,6 +893,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: "Ensure kernel module ''tipc'' is blacklisted" raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_kernel_module_tipc_disabled | default(true) | bool)
 - block:
   - name: Ensure kernel module 'cramfs' is disabled
     ansible.builtin.lineinfile:
@@ -897,6 +920,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: "Ensure kernel module ''cramfs'' is disabled" raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_kernel_module_cramfs_disabled | default(true) | bool)
 - block:
   - name: Ensure kernel module 'cramfs' is blacklisted
     ansible.builtin.lineinfile:
@@ -923,6 +947,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: "Ensure kernel module ''cramfs'' is blacklisted" raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_kernel_module_cramfs_disabled | default(true) | bool)
 - block:
   - name: List /etc/sysctl.d/*.conf files
     ansible.builtin.find:
@@ -952,6 +977,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_kernel_dmesg_restrict | default(true) | bool)
 - block:
   - name: Comment out any occurrences of kernel.dmesg_restrict from config files
     ansible.builtin.replace:
@@ -979,6 +1005,7 @@
       msg: 'StigForge: ''Comment out any occurrences of kernel.dmesg_restrict from config files'' raised an error (module
         or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
         independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_kernel_dmesg_restrict | default(true) | bool)
 - block:
   - name: Ensure sysctl kernel.dmesg_restrict is set to 1
     ansible.posix.sysctl:
@@ -1005,6 +1032,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure sysctl kernel.dmesg_restrict is set to 1'' raised an error (module or templating) and was
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_kernel_dmesg_restrict | default(true) | bool)
 - block:
   - name: List /etc/sysctl.d/*.conf files
     ansible.builtin.find:
@@ -1032,6 +1060,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_kernel_perf_event_paranoid | default(true)
+    | bool)
 - block:
   - name: Comment out any occurrences of kernel.perf_event_paranoid from config files
     ansible.builtin.replace:
@@ -1057,6 +1087,8 @@
       msg: 'StigForge: ''Comment out any occurrences of kernel.perf_event_paranoid from config files'' raised an error (module
         or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
         independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_kernel_perf_event_paranoid | default(true)
+    | bool)
 - block:
   - name: Ensure sysctl kernel.perf_event_paranoid is set to 2
     ansible.posix.sysctl:
@@ -1082,6 +1114,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure sysctl kernel.perf_event_paranoid is set to 2'' raised an error (module or templating) and
         was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_kernel_perf_event_paranoid | default(true)
+    | bool)
 - block:
   - name: Disable chrony daemon from acting as server
     block:
@@ -1127,6 +1161,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable chrony daemon from acting as server'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_chronyd_client_only | default(true) | bool)
 - block:
   - name: Disable network management of chrony daemon
     block:
@@ -1171,6 +1206,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable network management of chrony daemon'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_chronyd_no_chronyc_network | default(true) | bool)
 - block:
   - name: Log USBGuard daemon audit events using Linux Audit
     block:
@@ -1218,6 +1254,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Log USBGuard daemon audit events using Linux Audit'' raised an error (module or templating) and was
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_usbguard_auditbackend | default(true) |
+    bool)
 - block:
   - name: Update grub defaults and the bootloader menu
     ansible.builtin.command: /sbin/grubby --update-kernel=ALL --args="audit=1"
@@ -1248,6 +1286,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Update grub defaults and the bootloader menu'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_grub2_audit_argument | default(true) | bool)
 - block:
   - name: Update grub defaults and the bootloader menu
     ansible.builtin.command: /sbin/grubby --update-kernel=ALL --args="audit_backlog_limit=8192"
@@ -1271,6 +1310,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Update grub defaults and the bootloader menu'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_grub2_audit_backlog_limit_argument | default(true)
+    | bool)
 - block:
   - name: Resolve information before writing to audit logs
     block:
@@ -1317,3 +1358,4 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Resolve information before writing to audit logs'' raised an error (module or templating) and was
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_auditd_log_format | default(true) | bool)

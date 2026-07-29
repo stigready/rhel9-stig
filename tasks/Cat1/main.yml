@@ -28,6 +28,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Uninstall vsftpd Package: Ensure vsftpd is removed'' raised an error (module or templating) and was
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_package_vsftpd_removed | default(true) | bool)
 - block:
   - name: 'Uninstall telnet-server Package: Ensure telnet-server is removed'
     ansible.builtin.package:
@@ -104,6 +105,7 @@
       msg: 'StigForge: ''Configure BIND to use System Crypto Policy - Check BIND configuration file exists'' raised an error
         (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
         state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_bind_crypto_policy | default(true) | bool)
 - block:
   - name: Configure BIND to use System Crypto Policy - Aborting remediation, file not found
     ansible.builtin.debug:
@@ -130,6 +132,7 @@
       msg: 'StigForge: ''Configure BIND to use System Crypto Policy - Aborting remediation, file not found'' raised an error
         (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
         state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_bind_crypto_policy | default(true) | bool)
 - block:
   - name: Configure BIND to use System Crypto Policy - Insert crypto-policy into BIND config
     ansible.builtin.lineinfile:
@@ -159,6 +162,7 @@
       msg: 'StigForge: ''Configure BIND to use System Crypto Policy - Insert crypto-policy into BIND config'' raised an error
         (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
         state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_bind_crypto_policy | default(true) | bool)
 - block:
   - name: Configure System Cryptography Policy
     ansible.builtin.lineinfile:
@@ -190,6 +194,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Configure System Cryptography Policy'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_crypto_policy | default(true) | bool)
 - block:
   - name: Verify that Crypto Policy is Set (runtime)
     ansible.builtin.command: /usr/bin/update-crypto-policies --set {{ var_system_crypto_policy }}
@@ -217,6 +222,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Verify that Crypto Policy is Set (runtime)'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_crypto_policy | default(true) | bool)
 - block:
   - name: Configure Kerberos to use System Crypto Policy
     ansible.builtin.file:
@@ -240,6 +246,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Configure Kerberos to use System Crypto Policy'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_kerberos_crypto_policy | default(true) |
+    bool)
 - block:
   - name: Configure Libreswan to use System Crypto Policy
     ansible.builtin.lineinfile:
@@ -266,6 +274,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Configure Libreswan to use System Crypto Policy'' raised an error (module or templating) and was
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_libreswan_crypto_policy | default(true)
+    | bool)
 - block:
   - name: Run dconf update
     ansible.builtin.command:
@@ -290,6 +300,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Run dconf update'' raised an error (module or templating) and was skipped; continuing so later rules
         still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_db_up_to_date | default(true) | bool)
 - block:
   - name: Disable the GNOME3 Login Restart and Shutdown Buttons
     community.general.ini_file:
@@ -320,6 +331,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable the GNOME3 Login Restart and Shutdown Buttons'' raised an error (module or templating) and
         was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_restart_shutdown | default(true)
+    | bool)
 - block:
   - name: Prevent user modification of GNOME disablement of Login Restart and Shutdown Buttons
     ansible.builtin.lineinfile:
@@ -349,6 +362,8 @@
       msg: 'StigForge: ''Prevent user modification of GNOME disablement of Login Restart and Shutdown Buttons'' raised an
         error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_restart_shutdown | default(true)
+    | bool)
 - block:
   - name: Dconf Update
     ansible.builtin.command: dconf update
@@ -372,6 +387,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Dconf Update'' raised an error (module or templating) and was skipped; continuing so later rules
         still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_restart_shutdown | default(true)
+    | bool)
 - block:
   - name: Disable GDM Automatic Login
     community.general.ini_file:
@@ -402,6 +419,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable GDM Automatic Login'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_gnome_gdm_disable_automatic_login | default(true)
+    | bool)
 - block:
   - name: Disable Ctrl-Alt-Del Reboot Key Sequence in GNOME3
     community.general.ini_file:
@@ -432,6 +451,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable Ctrl-Alt-Del Reboot Key Sequence in GNOME3'' raised an error (module or templating) and was
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_ctrlaltdel_reboot | default(true)
+    | bool)
 - block:
   - name: Prevent user modification of GNOME disablement of Ctrl-Alt-Del
     ansible.builtin.lineinfile:
@@ -460,6 +481,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Prevent user modification of GNOME disablement of Ctrl-Alt-Del'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_ctrlaltdel_reboot | default(true)
+    | bool)
 - block:
   - name: Dconf Update
     ansible.builtin.command: dconf update
@@ -483,6 +506,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Dconf Update'' raised an error (module or templating) and was skipped; continuing so later rules
         still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_gnome_disable_ctrlaltdel_reboot | default(true)
+    | bool)
 - block:
   - name: Ensure GPG check is globally activated
     community.general.ini_file:
@@ -521,6 +546,8 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure GPG check is globally activated'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_gpgcheck_globally_activated | default(true)
+    | bool)
 - block:
   - name: Ensure GPG check Enabled for Local Packages (dnf)
     block:
@@ -564,6 +591,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure GPG check Enabled for Local Packages (dnf)'' raised an error (module or templating) and was
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_gpgcheck_local_packages | default(true) | bool)
 - block:
   - name: Grep for dnf repo section names
     ansible.builtin.shell: 'set -o pipefail
@@ -602,6 +630,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Grep for dnf repo section names'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_gpgcheck_never_disabled | default(true) | bool)
 - block:
   - name: Set gpgcheck=1 for each dnf repo
     community.general.ini_file:
@@ -641,6 +670,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Set gpgcheck=1 for each dnf repo'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_gpgcheck_never_disabled | default(true) | bool)
 - block:
   - name: Read permission of GPG key directory
     ansible.builtin.stat:
@@ -671,6 +701,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Read permission of GPG key directory'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
   - name: Read signatures in GPG key
     ansible.builtin.command: gpg --show-keys --with-fingerprint --with-colons "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
@@ -702,6 +733,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Read signatures in GPG key'' raised an error (module or templating) and was skipped; continuing so
         later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
   - name: Set Fact - Installed GPG Fingerprints
     ansible.builtin.set_fact:
@@ -732,6 +764,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Set Fact - Installed GPG Fingerprints'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
   - name: Set Fact - Valid fingerprints
     ansible.builtin.set_fact:
@@ -762,6 +795,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Set Fact - Valid fingerprints'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
   - name: Import RedHat GPG key
     ansible.builtin.rpm_key:
@@ -796,6 +830,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Import RedHat GPG key'' raised an error (module or templating) and was skipped; continuing so later
         rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
   - name: Disable Ctrl-Alt-Del Burst Action
     ansible.builtin.lineinfile:
@@ -825,6 +860,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable Ctrl-Alt-Del Burst Action'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_disable_ctrlaltdel_burstaction | default(true) | bool)
 - block:
   - name: Disable Ctrl-Alt-Del Reboot Activation
     ansible.builtin.systemd:
@@ -850,6 +886,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable Ctrl-Alt-Del Reboot Activation'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_disable_ctrlaltdel_reboot | default(true) | bool)
 - block:
   - name: Prevent Login to Accounts With Empty Password - Check if system relies on authselect
     ansible.builtin.stat:
@@ -881,6 +918,7 @@
       msg: 'StigForge: ''Prevent Login to Accounts With Empty Password - Check if system relies on authselect'' raised an
         error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_empty_passwords | default(true) | bool)
 - block:
   - name: Prevent Login to Accounts With Empty Password - Remediate using authselect
     block:
@@ -952,6 +990,7 @@
       msg: 'StigForge: ''Prevent Login to Accounts With Empty Password - Remediate using authselect'' raised an error (module
         or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
         independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_empty_passwords | default(true) | bool)
 - block:
   - name: Prevent Login to Accounts With Empty Password - Remediate directly editing PAM files
     ansible.builtin.replace:
@@ -988,6 +1027,7 @@
       msg: 'StigForge: ''Prevent Login to Accounts With Empty Password - Remediate directly editing PAM files'' raised an
         error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_empty_passwords | default(true) | bool)
 - block:
   - name: Collect users with no password
     ansible.builtin.command: 'awk -F: ''!$2 {print $1}'' /etc/shadow
@@ -1014,6 +1054,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Collect users with no password'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_empty_passwords_etc_shadow | default(true) | bool)
 - block:
   - name: Lock users with no password
     ansible.builtin.command: 'passwd -l {{ item }}
@@ -1041,6 +1082,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Lock users with no password'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_empty_passwords_etc_shadow | default(true) | bool)
 - block:
   - name: Get all /etc/passwd file entries
     ansible.builtin.getent:
@@ -1068,6 +1110,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Get all /etc/passwd file entries'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_no_uid_except_zero | default(true) | bool)
 - block:
   - name: Lock the password of the user accounts other than root with uid 0
     ansible.builtin.command: passwd -l {{ item.key }}
@@ -1096,6 +1139,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Lock the password of the user accounts other than root with uid 0'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_no_uid_except_zero | default(true) | bool)
 - block:
   - name: Ensure SELinux State is Enforcing
     block:
@@ -1145,6 +1189,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure SELinux State is Enforcing'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_selinux_state | default(true) | bool)
 - block:
   - name: ' - Mark system to relabel SELinux on next boot'
     ansible.builtin.file:
@@ -1173,6 +1218,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: '' - Mark system to relabel SELinux on next boot'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_selinux_state | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Define Excluded (Non-Local) File Systems and Paths
     ansible.builtin.set_fact:
@@ -1219,6 +1265,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Define Excluded (Non-Local) File Systems and Paths'' raised
         an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Find Relevant Root Directories Ignoring Pre-Defined Excluded Paths
     ansible.builtin.find:
@@ -1244,6 +1291,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Find Relevant Root Directories Ignoring Pre-Defined Excluded
         Paths'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
         the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Include Relevant Root Directories in a List of Paths to be Searched
     ansible.builtin.set_fact:
@@ -1265,6 +1313,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Include Relevant Root Directories in a List of Paths to
         be Searched'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
         evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Increment Search Paths List with Local Partitions Mount Points
     ansible.builtin.set_fact:
@@ -1289,6 +1338,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Increment Search Paths List with Local Partitions Mount
         Points'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
         the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Increment Search Paths List with Local NFS File System Targets
     ansible.builtin.set_fact:
@@ -1311,6 +1361,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Increment Search Paths List with Local NFS File System Targets''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Define Rule Specific Facts
     ansible.builtin.set_fact:
@@ -1331,6 +1382,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Define Rule Specific Facts'' raised an error (module or
         templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Find All shosts.equiv Files in Local File Systems
     ansible.builtin.command:
@@ -1354,6 +1406,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Find All shosts.equiv Files in Local File Systems'' raised
         an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Create List of shosts.equiv Files Present in Local File Systems
     ansible.builtin.set_fact:
@@ -1375,6 +1428,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Create List of shosts.equiv Files Present in Local File
         Systems'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
         the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Ensure No shosts.equiv Files Are Present in the System
     ansible.builtin.file:
@@ -1397,6 +1451,7 @@
       msg: 'StigForge: ''Remove Host-Based Authentication Files - Ensure No shosts.equiv Files Are Present in the System''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Define Excluded (Non-Local) File Systems and Paths
     ansible.builtin.set_fact:
@@ -1443,6 +1498,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Define Excluded (Non-Local) File Systems and Paths''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Find Relevant Root Directories Ignoring Pre-Defined Excluded Paths
     ansible.builtin.find:
@@ -1468,6 +1524,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Find Relevant Root Directories Ignoring Pre-Defined
         Excluded Paths'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
         evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Include Relevant Root Directories in a List of Paths to be Searched
     ansible.builtin.set_fact:
@@ -1489,6 +1546,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Include Relevant Root Directories in a List of Paths
         to be Searched'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
         evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Increment Search Paths List with Local Partitions Mount Points
     ansible.builtin.set_fact:
@@ -1513,6 +1571,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Increment Search Paths List with Local Partitions Mount
         Points'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
         the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Increment Search Paths List with Local NFS File System Targets
     ansible.builtin.set_fact:
@@ -1535,6 +1594,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Increment Search Paths List with Local NFS File System
         Targets'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
         the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Define Rule Specific Facts
     ansible.builtin.set_fact:
@@ -1556,6 +1616,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Define Rule Specific Facts'' raised an error (module
         or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
         independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Find All .shosts Files in Local File Systems
     ansible.builtin.command:
@@ -1579,6 +1640,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Find All .shosts Files in Local File Systems'' raised
         an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Create List of .shosts Files Present in Local File Systems
     ansible.builtin.set_fact:
@@ -1600,6 +1662,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Create List of .shosts Files Present in Local File
         Systems'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
         the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Remove User Host-Based Authentication Files - Ensure No .shosts Files Are Present in the System
     ansible.builtin.file:
@@ -1622,6 +1685,7 @@
       msg: 'StigForge: ''Remove User Host-Based Authentication Files - Ensure No .shosts Files Are Present in the System''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
   - name: Disable SSH Access via Empty Passwords
     block:
@@ -1686,6 +1750,7 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Disable SSH Access via Empty Passwords'' raised an error (module or templating) and was skipped;
         continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
 - block:
   - name: Disable SSH Access via Empty Passwords - set file mode for /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
     ansible.builtin.file:
@@ -1719,3 +1784,4 @@
       msg: 'StigForge: ''Disable SSH Access via Empty Passwords - set file mode for /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf''
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
