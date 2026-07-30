@@ -2,6 +2,21 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.2.4] - 2026-07-30
+
+### Changed
+- StigForge export refresh for `rhel9_stig` at `0.2.4`.
+
+### Verified (OpenSCAP)
+
+- **`stig`** — score **94.29%** (floor 90.0%) · gate **PASS** · evidence `20260729T223453Z`
+  - Remaining counted failures: `accounts_umask_etc_bashrc, file_permissions_ungroupowned, network_configure_name_resolution, rootfiles_configured`
+
+### Provenance
+
+- Factory pipeline: https://github.com/stigready/stigforge/actions/runs/30496236357
+- Factory commit: `7f7cafc85a392bf2a7eb04f1b979185dbcdf5530`
+
 ## [0.2.4-private-review] - 2026-07-29
 
 ### Changed
