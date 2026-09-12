@@ -164,12 +164,47 @@
         state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_bind_crypto_policy | default(true) | bool)
 - block:
-  - name: Configure System Cryptography Policy
-    ansible.builtin.lineinfile:
+  - name: Configure System Cryptography Policy - Check current crypto policy (runtime)
+    ansible.builtin.command: /usr/bin/update-crypto-policies --show
+    register: current_crypto_policy
+    changed_when: false
+    failed_when: false
+    check_mode: false
+    tags:
+    - CCE-83450-7
+    - DISA-STIG-RHEL-09-215105
+    - DISA-STIG-RHEL-09-672030
+    - NIST-800-53-AC-17(2)
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-MA-4(6)
+    - NIST-800-53-SC-12(2)
+    - NIST-800-53-SC-12(3)
+    - NIST-800-53-SC-13
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.7
+    - configure_crypto_policy
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure System Cryptography Policy - Check current crypto policy (runtime)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure System Cryptography Policy - Check current crypto policy (runtime)'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_crypto_policy | default(true) | bool)
+- block:
+  - name: Configure System Cryptography Policy - Get mtime of /etc/crypto-policies/config
+    ansible.builtin.stat:
       path: /etc/crypto-policies/config
-      regexp: ^(?!#)(\S+)$
-      line: '{{ var_system_crypto_policy }}'
-      create: true
+    register: config_file_stat
+    changed_when: false
+    failed_when: false
+    check_mode: false
     tags:
     - CCE-83450-7
     - DISA-STIG-RHEL-09-215105
@@ -190,14 +225,89 @@
     - no_reboot_needed
     - restrict_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Configure System Cryptography Policy'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Configure System Cryptography Policy - Get mtime of /etc/crypto-policies/config''
+      (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Configure System Cryptography Policy'' raised an error (module or templating) and was skipped; continuing
-        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Configure System Cryptography Policy - Get mtime of /etc/crypto-policies/config'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_crypto_policy | default(true) | bool)
 - block:
-  - name: Verify that Crypto Policy is Set (runtime)
+  - name: Configure System Cryptography Policy - Get mtime of /etc/crypto-policies/state/current
+    ansible.builtin.stat:
+      path: /etc/crypto-policies/state/current
+    register: current_file_stat
+    changed_when: false
+    failed_when: false
+    check_mode: false
+    tags:
+    - CCE-83450-7
+    - DISA-STIG-RHEL-09-215105
+    - DISA-STIG-RHEL-09-672030
+    - NIST-800-53-AC-17(2)
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-MA-4(6)
+    - NIST-800-53-SC-12(2)
+    - NIST-800-53-SC-12(3)
+    - NIST-800-53-SC-13
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.7
+    - configure_crypto_policy
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure System Cryptography Policy - Get mtime of /etc/crypto-policies/state/current''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure System Cryptography Policy - Get mtime of /etc/crypto-policies/state/current'' raised an
+        error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_crypto_policy | default(true) | bool)
+- block:
+  - name: Configure System Cryptography Policy - Check existence of /etc/crypto-policies/back-ends/nss.config
+    ansible.builtin.stat:
+      path: /etc/crypto-policies/back-ends/nss.config
+    register: nss_config_stat
+    changed_when: false
+    failed_when: false
+    check_mode: false
+    tags:
+    - CCE-83450-7
+    - DISA-STIG-RHEL-09-215105
+    - DISA-STIG-RHEL-09-672030
+    - NIST-800-53-AC-17(2)
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-MA-4(6)
+    - NIST-800-53-SC-12(2)
+    - NIST-800-53-SC-12(3)
+    - NIST-800-53-SC-13
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.7
+    - configure_crypto_policy
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure System Cryptography Policy - Check existence of /etc/crypto-policies/back-ends/nss.config''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure System Cryptography Policy - Check existence of /etc/crypto-policies/back-ends/nss.config''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_crypto_policy | default(true) | bool)
+- block:
+  - name: Configure System Cryptography Policy - Verify that Crypto Policy is Set (runtime)
     ansible.builtin.command: /usr/bin/update-crypto-policies --set {{ var_system_crypto_policy }}
+    when: (current_crypto_policy.stdout.strip() != var_system_crypto_policy) or ((config_file_stat is not skipped and config_file_stat.stat.exists)
+      and (current_file_stat is not skipped and current_file_stat.stat.exists) and (config_file_stat is not skipped and config_file_stat.stat.mtime)
+      > (current_file_stat is not skipped and current_file_stat.stat.mtime)) or (not (nss_config_stat is not skipped and nss_config_stat.stat.exists))
     tags:
     - CCE-83450-7
     - DISA-STIG-RHEL-09-215105
@@ -218,42 +328,21 @@
     - no_reboot_needed
     - restrict_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Verify that Crypto Policy is Set (runtime)'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Configure System Cryptography Policy - Verify that Crypto Policy is Set (runtime)''
+      (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Verify that Crypto Policy is Set (runtime)'' raised an error (module or templating) and was skipped;
-        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Configure System Cryptography Policy - Verify that Crypto Policy is Set (runtime)'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_crypto_policy | default(true) | bool)
-- block:
-  - name: Configure Kerberos to use System Crypto Policy
-    ansible.builtin.file:
-      src: /etc/crypto-policies/back-ends/krb5.config
-      path: /etc/krb5.conf.d/crypto-policies
-      state: link
-    tags:
-    - CCE-83449-9
-    - DISA-STIG-RHEL-09-672025
-    - NIST-800-53-SC-12(2)
-    - NIST-800-53-SC-12(3)
-    - NIST-800-53-SC-13
-    - configure_kerberos_crypto_policy
-    - configure_strategy
-    - high_severity
-    - low_complexity
-    - low_disruption
-    - reboot_required
-  rescue:
-  - name: 'StigForge: continue after error in ''Configure Kerberos to use System Crypto Policy'' (OpenSCAP is the score gate)'
-    ansible.builtin.debug:
-      msg: 'StigForge: ''Configure Kerberos to use System Crypto Policy'' raised an error (module or templating) and was skipped;
-        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
-  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_kerberos_crypto_policy | default(true) |
-    bool)
 - block:
   - name: Configure Libreswan to use System Crypto Policy
     ansible.builtin.lineinfile:
       path: /etc/ipsec.conf
       line: include /etc/crypto-policies/back-ends/libreswan.config
       create: true
+      mode: 420
+    when: ( "libreswan" in ansible_facts.packages and "kernel-core" in ansible_facts.packages )
     tags:
     - CCE-83446-5
     - DISA-STIG-RHEL-09-671020
@@ -277,12 +366,14 @@
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_configure_libreswan_crypto_policy | default(true)
     | bool)
 - block:
-  - name: Run dconf update
-    ansible.builtin.command:
-      cmd: dconf update
+  - name: Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get database modification
+      time for distro
+    ansible.builtin.stat:
+      path: /etc/dconf/db/distro
+    register: distro_db
     when:
     - '"gdm" in ansible_facts.packages'
-    - '"kernel" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-87295-2
     - DISA-STIG-RHEL-09-271090
@@ -296,10 +387,155 @@
     - no_reboot_needed
     - unknown_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Run dconf update'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Make sure that the dconf databases are up-to-date with regards to respective
+      keyfiles - Get database modification time for distro'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Run dconf update'' raised an error (module or templating) and was skipped; continuing so later rules
-        still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get database
+        modification time for distro'' raised an error (module or templating) and was skipped; continuing so later rules still
+        run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_db_up_to_date | default(true) | bool)
+- block:
+  - name: Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get keyfiles for distro
+    ansible.builtin.find:
+      paths: /etc/dconf/db/distro.d/
+    register: distro_keyfiles
+    when:
+    - '"gdm" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-87295-2
+    - DISA-STIG-RHEL-09-271090
+    - PCI-DSS-Req-6.2
+    - PCI-DSSv4-8.2
+    - PCI-DSSv4-8.2.8
+    - dconf_db_up_to_date
+    - high_severity
+    - low_complexity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Make sure that the dconf databases are up-to-date with regards to respective
+      keyfiles - Get keyfiles for distro'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get keyfiles
+        for distro'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
+        evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_db_up_to_date | default(true) | bool)
+- block:
+  - name: Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Run dconf update for distro
+    ansible.builtin.command:
+      cmd: dconf update
+    when:
+    - '"gdm" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
+    - not (distro_db is not skipped and distro_db.stat.exists) or distro_keyfiles.files | length > 0 and distro_keyfiles.files
+      | map(attribute='mtime') | max > (distro_db is not skipped and distro_db.stat.mtime)
+    tags:
+    - CCE-87295-2
+    - DISA-STIG-RHEL-09-271090
+    - PCI-DSS-Req-6.2
+    - PCI-DSSv4-8.2
+    - PCI-DSSv4-8.2.8
+    - dconf_db_up_to_date
+    - high_severity
+    - low_complexity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Make sure that the dconf databases are up-to-date with regards to respective
+      keyfiles - Run dconf update for distro'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Run dconf
+        update for distro'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
+        evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_db_up_to_date | default(true) | bool)
+- block:
+  - name: Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get database modification
+      time for local
+    ansible.builtin.stat:
+      path: /etc/dconf/db/local
+    register: local_db
+    when:
+    - '"gdm" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-87295-2
+    - DISA-STIG-RHEL-09-271090
+    - PCI-DSS-Req-6.2
+    - PCI-DSSv4-8.2
+    - PCI-DSSv4-8.2.8
+    - dconf_db_up_to_date
+    - high_severity
+    - low_complexity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Make sure that the dconf databases are up-to-date with regards to respective
+      keyfiles - Get database modification time for local'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get database
+        modification time for local'' raised an error (module or templating) and was skipped; continuing so later rules still
+        run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_db_up_to_date | default(true) | bool)
+- block:
+  - name: Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get keyfiles for local
+    ansible.builtin.find:
+      paths: /etc/dconf/db/local.d/
+    register: local_keyfiles
+    when:
+    - '"gdm" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-87295-2
+    - DISA-STIG-RHEL-09-271090
+    - PCI-DSS-Req-6.2
+    - PCI-DSSv4-8.2
+    - PCI-DSSv4-8.2.8
+    - dconf_db_up_to_date
+    - high_severity
+    - low_complexity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Make sure that the dconf databases are up-to-date with regards to respective
+      keyfiles - Get keyfiles for local'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Get keyfiles
+        for local'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
+        evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_db_up_to_date | default(true) | bool)
+- block:
+  - name: Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Run dconf update for local
+    ansible.builtin.command:
+      cmd: dconf update
+    when:
+    - '"gdm" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
+    - not (local_db is not skipped and local_db.stat.exists) or local_keyfiles.files | length > 0 and local_keyfiles.files
+      | map(attribute='mtime') | max > (local_db is not skipped and local_db.stat.mtime)
+    tags:
+    - CCE-87295-2
+    - DISA-STIG-RHEL-09-271090
+    - PCI-DSS-Req-6.2
+    - PCI-DSSv4-8.2
+    - PCI-DSSv4-8.2.8
+    - dconf_db_up_to_date
+    - high_severity
+    - low_complexity
+    - medium_disruption
+    - no_reboot_needed
+    - unknown_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Make sure that the dconf databases are up-to-date with regards to respective
+      keyfiles - Run dconf update for local'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Make sure that the dconf databases are up-to-date with regards to respective keyfiles - Run dconf
+        update for local'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
+        evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_dconf_db_up_to_date | default(true) | bool)
 - block:
   - name: Disable the GNOME3 Login Restart and Shutdown Buttons
@@ -310,6 +546,8 @@
       value: 'true'
       create: true
       no_extra_spaces: true
+      mode: 420
+    register: result_ini
     when: '"gdm" in ansible_facts.packages'
     tags:
     - CCE-86315-9
@@ -340,6 +578,8 @@
       regexp: ^/org/gnome/login-screen/disable-restart-buttons
       line: /org/gnome/login-screen/disable-restart-buttons
       create: true
+      mode: 420
+    register: result_lineinfile
     when: '"gdm" in ansible_facts.packages'
     tags:
     - CCE-86315-9
@@ -367,7 +607,9 @@
 - block:
   - name: Dconf Update
     ansible.builtin.command: dconf update
-    when: '"gdm" in ansible_facts.packages'
+    when:
+    - '"gdm" in ansible_facts.packages'
+    - result_ini is changed or result_lineinfile is changed
     tags:
     - CCE-86315-9
     - DISA-STIG-RHEL-09-271095
@@ -398,6 +640,7 @@
       value: 'false'
       no_extra_spaces: true
       create: true
+      mode: 420
     when: '"gdm" in ansible_facts.packages'
     tags:
     - CCE-89663-9
@@ -430,6 +673,8 @@
       value: '['''']'
       create: true
       no_extra_spaces: true
+      mode: 420
+    register: result_ini
     when: '"gdm" in ansible_facts.packages'
     tags:
     - CCE-88653-1
@@ -460,6 +705,8 @@
       regexp: ^/org/gnome/settings-daemon/plugins/media-keys/logout$
       line: /org/gnome/settings-daemon/plugins/media-keys/logout
       create: true
+      mode: 420
+    register: result_lineinfile
     when: '"gdm" in ansible_facts.packages'
     tags:
     - CCE-88653-1
@@ -486,7 +733,9 @@
 - block:
   - name: Dconf Update
     ansible.builtin.command: dconf update
-    when: '"gdm" in ansible_facts.packages'
+    when:
+    - '"gdm" in ansible_facts.packages'
+    - result_ini is changed or result_lineinfile is changed
     tags:
     - CCE-88653-1
     - DISA-STIG-RHEL-09-271105
@@ -568,6 +817,7 @@
         value: 1
         no_extra_spaces: true
         create: true
+        mode: 420
     when: '"dnf" in ansible_facts.packages'
     tags:
     - CCE-83463-0
@@ -672,7 +922,7 @@
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_gpgcheck_never_disabled | default(true) | bool)
 - block:
-  - name: Read permission of GPG key directory
+  - name: 'Ensure Red Hat GPG Key Installed: Read permission of GPG key directory'
     ansible.builtin.stat:
       path: /etc/pki/rpm-gpg/
     register: gpg_key_directory_permission
@@ -697,13 +947,15 @@
     - no_reboot_needed
     - restrict_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Read permission of GPG key directory'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Ensure Red Hat GPG Key Installed: Read permission of GPG key directory'' (OpenSCAP
+      is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Read permission of GPG key directory'' raised an error (module or templating) and was skipped; continuing
-        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Ensure Red Hat GPG Key Installed: Read permission of GPG key directory'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
-  - name: Read signatures in GPG key
+  - name: 'Ensure Red Hat GPG Key Installed: Read signatures in GPG key'
     ansible.builtin.command: gpg --show-keys --with-fingerprint --with-colons "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
     changed_when: false
     register: gpg_fingerprints
@@ -729,17 +981,17 @@
     - no_reboot_needed
     - restrict_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Read signatures in GPG key'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Ensure Red Hat GPG Key Installed: Read signatures in GPG key'' (OpenSCAP is
+      the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Read signatures in GPG key'' raised an error (module or templating) and was skipped; continuing so
-        later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Ensure Red Hat GPG Key Installed: Read signatures in GPG key'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
-  - name: Set Fact - Installed GPG Fingerprints
+  - name: 'Ensure Red Hat GPG Key Installed: Set Fact - Installed GPG Fingerprints'
     ansible.builtin.set_fact:
-      gpg_installed_fingerprints: '{{ gpg_fingerprints.stdout | regex_findall(''^pub.*
-
-        (?:^fpr[:]*)([0-9A-Fa-f]*)'', ''\1'') | list }}'
+      gpg_installed_fingerprints: '{{ gpg_fingerprints.stdout | regex_findall(''^pub.*\n(?:^fpr[:]*)([0-9A-Fa-f]*)'', ''\1'')
+        | list }}'
     tags:
     - CCE-84180-9
     - CJIS-5.10.4.1
@@ -760,13 +1012,15 @@
     - no_reboot_needed
     - restrict_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Set Fact - Installed GPG Fingerprints'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Ensure Red Hat GPG Key Installed: Set Fact - Installed GPG Fingerprints''
+      (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Set Fact - Installed GPG Fingerprints'' raised an error (module or templating) and was skipped; continuing
-        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Ensure Red Hat GPG Key Installed: Set Fact - Installed GPG Fingerprints'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
-  - name: Set Fact - Valid fingerprints
+  - name: 'Ensure Red Hat GPG Key Installed: Set Fact - Valid fingerprints'
     ansible.builtin.set_fact:
       gpg_valid_fingerprints:
       - 567E347AD0044ADE55BA8A5F199E2F91FD431D51
@@ -791,16 +1045,15 @@
     - no_reboot_needed
     - restrict_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Set Fact - Valid fingerprints'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Ensure Red Hat GPG Key Installed: Set Fact - Valid fingerprints'' (OpenSCAP
+      is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Set Fact - Valid fingerprints'' raised an error (module or templating) and was skipped; continuing
-        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Ensure Red Hat GPG Key Installed: Set Fact - Valid fingerprints'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
-  - name: Import RedHat GPG key
-    ansible.builtin.rpm_key:
-      state: present
-      key: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+  - name: 'Ensure Red Hat GPG Key Installed: Import RedHat GPG key'
+    ansible.builtin.command: rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
     when:
     - (gpg_key_directory_permission is not skipped and gpg_key_directory_permission.stat.mode) <= '0755'
     - (gpg_installed_fingerprints | difference(gpg_valid_fingerprints)) | length == 0
@@ -826,10 +1079,11 @@
     - no_reboot_needed
     - restrict_strategy
   rescue:
-  - name: 'StigForge: continue after error in ''Import RedHat GPG key'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Ensure Red Hat GPG Key Installed: Import RedHat GPG key'' (OpenSCAP is the
+      score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Import RedHat GPG key'' raised an error (module or templating) and was skipped; continuing so later
-        rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Ensure Red Hat GPG Key Installed: Import RedHat GPG key'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_ensure_redhat_gpgkey_installed | default(true) | bool)
 - block:
   - name: Disable Ctrl-Alt-Del Burst Action
@@ -839,8 +1093,9 @@
       regexp: ^CtrlAltDelBurstAction
       line: CtrlAltDelBurstAction=none
       create: true
+      mode: 420
     when:
-    - '"kernel" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
     - '"systemd" in ansible_facts.packages'
     tags:
     - CCE-90308-8
@@ -868,7 +1123,7 @@
       force: true
       masked: true
       state: stopped
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-86667-3
     - DISA-STIG-RHEL-09-211050
@@ -892,7 +1147,7 @@
     ansible.builtin.stat:
       path: /usr/bin/authselect
     register: result_authselect_present
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-83611-4
     - CJIS-5.5.2
@@ -963,7 +1218,7 @@
       - result_authselect_enable_feature_cmd is not skipped
       - result_authselect_enable_feature_cmd is success
     when:
-    - '"kernel" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
     - (result_authselect_present is not skipped and result_authselect_present.stat.exists)
     tags:
     - CCE-83611-4
@@ -1000,7 +1255,7 @@
     - /etc/pam.d/system-auth
     - /etc/pam.d/password-auth
     when:
-    - '"kernel" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
     - not (result_authselect_present is not skipped and result_authselect_present.stat.exists)
     tags:
     - CCE-83611-4
@@ -1035,7 +1290,7 @@
       '
     register: users_nopasswd
     changed_when: false
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-85972-8
     - DISA-STIG-RHEL-09-611155
@@ -1062,7 +1317,7 @@
       '
     with_items: '{{ users_nopasswd.stdout_lines }}'
     when:
-    - '"kernel" in ansible_facts.packages'
+    - '"kernel-core" in ansible_facts.packages'
     - users_nopasswd is not skipped and users_nopasswd.stdout_lines | length > 0
     tags:
     - CCE-85972-8
@@ -1088,6 +1343,7 @@
     ansible.builtin.getent:
       database: passwd
       split: ':'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-83624-7
     - DISA-STIG-RHEL-09-411100
@@ -1114,8 +1370,10 @@
 - block:
   - name: Lock the password of the user accounts other than root with uid 0
     ansible.builtin.command: passwd -l {{ item.key }}
-    loop: '{{ getent_passwd | dict2items | rejectattr(''key'', ''search'', ''root'') | list }}'
-    when: item.value.1  == '0'
+    loop: '{{ getent_passwd | dict2items | rejectattr(''key'', ''equalto'', ''root'') | list }}'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - item.value.1  == '0'
     tags:
     - CCE-83624-7
     - DISA-STIG-RHEL-09-411100
@@ -1140,6 +1398,38 @@
       msg: 'StigForge: ''Lock the password of the user accounts other than root with uid 0'' raised an error (module or templating)
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_no_uid_except_zero | default(true) | bool)
+- block:
+  - name: Ensure SELinux State is Enforcing - Check current SELinux state
+    ansible.builtin.command:
+      cmd: getenforce
+    register: current_selinux_state
+    check_mode: false
+    changed_when: false
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84079-3
+    - DISA-STIG-RHEL-09-431010
+    - NIST-800-171-3.1.2
+    - NIST-800-171-3.7.2
+    - NIST-800-53-AC-3
+    - NIST-800-53-AC-3(3)(a)
+    - NIST-800-53-AU-9
+    - NIST-800-53-SC-7(21)
+    - PCI-DSSv4-1.2
+    - PCI-DSSv4-1.2.6
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+    - selinux_state
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure SELinux State is Enforcing - Check current SELinux state'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure SELinux State is Enforcing - Check current SELinux state'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_selinux_state | default(true) | bool)
 - block:
   - name: Ensure SELinux State is Enforcing
     block:
@@ -1166,7 +1456,7 @@
         regexp: (?i)^SELINUX=
         line: SELINUX={{ var_selinux_state }}
         state: present
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84079-3
     - DISA-STIG-RHEL-09-431010
@@ -1191,11 +1481,16 @@
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_selinux_state | default(true) | bool)
 - block:
-  - name: ' - Mark system to relabel SELinux on next boot'
+  - name: Ensure SELinux State is Enforcing - Mark system to relabel SELinux on next boot
     ansible.builtin.file:
       path: /.autorelabel
       state: touch
-    when: '"kernel" in ansible_facts.packages'
+      access_time: preserve
+      modification_time: preserve
+      mode: 420
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - current_selinux_state.stdout | lower != var_selinux_state
     tags:
     - CCE-84079-3
     - DISA-STIG-RHEL-09-431010
@@ -1214,10 +1509,12 @@
     - restrict_strategy
     - selinux_state
   rescue:
-  - name: 'StigForge: continue after error in '' - Mark system to relabel SELinux on next boot'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Ensure SELinux State is Enforcing - Mark system to relabel SELinux on next
+      boot'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: '' - Mark system to relabel SELinux on next boot'' raised an error (module or templating) and was skipped;
-        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Ensure SELinux State is Enforcing - Mark system to relabel SELinux on next boot'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_selinux_state | default(true) | bool)
 - block:
   - name: Remove Host-Based Authentication Files - Define Excluded (Non-Local) File Systems and Paths
@@ -1687,6 +1984,187 @@
         resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_no_user_host_based_files | default(true) | bool)
 - block:
+  - name: Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured in /etc/ssh/sshd_config
+    ansible.builtin.lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: (?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+
+      state: absent
+    check_mode: true
+    changed_when: false
+    register: _config_file_has_parameter
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-90799-8
+    - CJIS-5.5.6
+    - DISA-STIG-RHEL-09-255040
+    - NIST-800-171-3.1.1
+    - NIST-800-171-3.1.5
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - PCI-DSS-Req-2.2.4
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.6
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+    - sshd_disable_empty_passwords
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords
+      is configured in /etc/ssh/sshd_config'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured
+        in /etc/ssh/sshd_config'' raised an error (module or templating) and was skipped; continuing so later rules still
+        run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
+- block:
+  - name: Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured in /etc/ssh/sshd_config.d
+    ansible.builtin.find:
+      paths:
+      - /etc/ssh/sshd_config.d
+      contains: (?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+
+    register: _config_dir_has_parameter
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-90799-8
+    - CJIS-5.5.6
+    - DISA-STIG-RHEL-09-255040
+    - NIST-800-171-3.1.1
+    - NIST-800-171-3.1.5
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - PCI-DSS-Req-2.2.4
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.6
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+    - sshd_disable_empty_passwords
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords
+      is configured in /etc/ssh/sshd_config.d'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured
+        in /etc/ssh/sshd_config.d'' raised an error (module or templating) and was skipped; continuing so later rules still
+        run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
+- block:
+  - name: Disable SSH Access via Empty Passwords - Check if /etc/ssh/sshd_config exists
+    ansible.builtin.stat:
+      path: /etc/ssh/sshd_config
+    register: _config_file_exists
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-90799-8
+    - CJIS-5.5.6
+    - DISA-STIG-RHEL-09-255040
+    - NIST-800-171-3.1.1
+    - NIST-800-171-3.1.5
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - PCI-DSS-Req-2.2.4
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.6
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+    - sshd_disable_empty_passwords
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable SSH Access via Empty Passwords - Check if /etc/ssh/sshd_config exists''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable SSH Access via Empty Passwords - Check if /etc/ssh/sshd_config exists'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
+- block:
+  - name: Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured correctly in
+      /etc/ssh/sshd_config
+    ansible.builtin.lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: (?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+no$
+      state: absent
+    check_mode: true
+    changed_when: false
+    register: _config_file_correctly
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - (_config_file_exists is not skipped and _config_file_exists.stat.exists)
+    tags:
+    - CCE-90799-8
+    - CJIS-5.5.6
+    - DISA-STIG-RHEL-09-255040
+    - NIST-800-171-3.1.1
+    - NIST-800-171-3.1.5
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - PCI-DSS-Req-2.2.4
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.6
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+    - sshd_disable_empty_passwords
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords
+      is configured correctly in /etc/ssh/sshd_config'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured
+        correctly in /etc/ssh/sshd_config'' raised an error (module or templating) and was skipped; continuing so later rules
+        still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
+- block:
+  - name: Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured correctly in
+      /etc/ssh/sshd_config.d
+    ansible.builtin.find:
+      paths:
+      - /etc/ssh/sshd_config.d
+      contains: (?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+no$
+    register: _config_dir_correctly
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-90799-8
+    - CJIS-5.5.6
+    - DISA-STIG-RHEL-09-255040
+    - NIST-800-171-3.1.1
+    - NIST-800-171-3.1.5
+    - NIST-800-53-AC-17(a)
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - PCI-DSS-Req-2.2.4
+    - PCI-DSSv4-2.2
+    - PCI-DSSv4-2.2.6
+    - high_severity
+    - low_complexity
+    - low_disruption
+    - no_reboot_needed
+    - restrict_strategy
+    - sshd_disable_empty_passwords
+  rescue:
+  - name: 'StigForge: continue after error in ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords
+      is configured correctly in /etc/ssh/sshd_config.d'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Disable SSH Access via Empty Passwords - Check if the parameter PermitEmptyPasswords is configured
+        correctly in /etc/ssh/sshd_config.d'' raised an error (module or templating) and was skipped; continuing so later
+        rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
+- block:
   - name: Disable SSH Access via Empty Passwords
     block:
     - name: Deduplicate values from /etc/ssh/sshd_config
@@ -1714,8 +2192,8 @@
         create: false
         regexp: (?i)(?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+
         state: absent
-      with_items: '{{ _etc_ssh_sshd_config_d_has_parameter.files }}'
-      when: _etc_ssh_sshd_config_d_has_parameter.matched
+      with_items: '{{ _etc_ssh_sshd_config_d_has_parameter.files | default([]) }}'
+      when: _etc_ssh_sshd_config_d_has_parameter.matched > 0
     - name: Insert correct line to /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
@@ -1725,7 +2203,11 @@
         state: present
         insertbefore: BOF
         validate: /usr/sbin/sshd -t -f %s
-    when: '"kernel" in ansible_facts.packages'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - _config_file_correctly is not skipped
+    - (_config_file_correctly.found == 0 and _config_dir_correctly.matched == 0) or ((_config_file_has_parameter.found | int)
+      + (_config_dir_has_parameter.matched | int)) != 1
     tags:
     - CCE-90799-8
     - CJIS-5.5.6
@@ -1757,7 +2239,9 @@
       path: /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
       mode: '0600'
       state: touch
-    when: '"kernel" in ansible_facts.packages'
+      modification_time: preserve
+      access_time: preserve
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-90799-8
     - CJIS-5.5.6

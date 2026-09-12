@@ -1,0 +1,21 @@
+{
+  "pass": 65,
+  "fail": 5,
+  "other": 1,
+  "total_scored": 70,
+  "score": 92.86,
+  "min_score": 90.0,
+  "meets_floor": true,
+  "gate_pass": true,
+  "enforce": true,
+  "failures": [
+    "accounts_umask_etc_bashrc",
+    "configure_crypto_policy",
+    "file_permissions_ungroupowned",
+    "network_configure_name_resolution",
+    "rootfiles_configured"
+  ],
+  "regressions": [],
+  "baseline": null,
+  "openscap_line": "OpenSCAP: pass=65 fail=5 score=92.9% (target 90%)"
+}

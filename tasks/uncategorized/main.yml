@@ -37,17 +37,13 @@
         later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_always | default(true) | bool)
 - block:
-  - name: List /etc/sysctl.d/*.conf files
-    ansible.builtin.find:
-      paths:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Set fact for sysctl paths
+    ansible.builtin.set_fact:
+      sysctl_paths:
       - /etc/sysctl.d/
       - /run/sysctl.d/
       - /usr/local/lib/sysctl.d/
-      contains: ^[\s]*net.ipv4.conf.all.log_martians.*$
-      patterns: '*.conf'
-      file_type: any
-    register: find_sysctl_d
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84000-9
     - DISA-STIG-RHEL-09-253025
@@ -62,20 +58,122 @@
     - sysctl_net_ipv4_conf_all_log_martians
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Set
+      fact for sysctl paths'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Set fact for sysctl paths''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
+    | bool)
+- block:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Find all files that contain net.ipv4.conf.all.log_martians
+    ansible.builtin.shell:
+      cmd: find -L {{ sysctl_paths | join(" ") }} -type f -name '*.conf' | xargs grep -HP '^\s*net.ipv4.conf.all.log_martians\s*=\s*.*$'
+    register: find_all_values
+    check_mode: false
+    changed_when: false
+    failed_when: false
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84000-9
+    - DISA-STIG-RHEL-09-253025
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_all_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Find
+      all files that contain net.ipv4.conf.all.log_martians'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Find all files that contain
+        net.ipv4.conf.all.log_martians'' raised an error (module or templating) and was skipped; continuing so later rules
+        still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
+    | bool)
+- block:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Find all files that set net.ipv4.conf.all.log_martians
+      to correct value
+    ansible.builtin.shell:
+      cmd: find -L {{ sysctl_paths | join(" ") }} -type f -name '*.conf' | xargs grep -HP '^\s*net.ipv4.conf.all.log_martians\s*=\s*{{
+        sysctl_net_ipv4_conf_all_log_martians_value }}$'
+    register: find_correct_value
+    check_mode: false
+    changed_when: false
+    failed_when: false
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84000-9
+    - DISA-STIG-RHEL-09-253025
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_all_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Find
+      all files that set net.ipv4.conf.all.log_martians to correct value'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Find all files that set net.ipv4.conf.all.log_martians
+        to correct value'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP
+        evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
+    | bool)
+- block:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Comment out any occurrences of net.ipv4.conf.all.log_martians
+      from config files
+    ansible.builtin.replace:
+      path: '{{ item | split(":") | first }}'
+      regexp: ^[\s]*net.ipv4.conf.all.log_martians
+      replace: '#net.ipv4.conf.all.log_martians'
+    loop: '{{ find_all_values.stdout_lines }}'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - find_correct_value.stdout_lines | length == 0 or find_all_values.stdout_lines | length > find_correct_value.stdout_lines
+      | length
+    tags:
+    - CCE-84000-9
+    - DISA-STIG-RHEL-09-253025
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_all_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Comment
+      out any occurrences of net.ipv4.conf.all.log_martians from config files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Comment out any occurrences
+        of net.ipv4.conf.all.log_martians from config files'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
     | bool)
 - block:
-  - name: Comment out any occurrences of net.ipv4.conf.all.log_martians from config files
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Comment out any occurrences of net.ipv4.conf.all.log_martians
+      from /etc/sysctl.conf
     ansible.builtin.replace:
-      path: '{{ item.path }}'
+      path: '{{ item }}'
       regexp: ^[\s]*net.ipv4.conf.all.log_martians
       replace: '#net.ipv4.conf.all.log_martians'
-    loop: '{{ find_sysctl_d.files }}'
-    when: '"kernel" in ansible_facts.packages'
+    with_fileglob:
+    - /etc/sysctl.conf
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84000-9
     - DISA-STIG-RHEL-09-253025
@@ -90,23 +188,24 @@
     - sysctl_net_ipv4_conf_all_log_martians
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''Comment out any occurrences of net.ipv4.conf.all.log_martians from config
-      files'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Comment
+      out any occurrences of net.ipv4.conf.all.log_martians from /etc/sysctl.conf'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Comment out any occurrences of net.ipv4.conf.all.log_martians from config files'' raised an error
-        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
-        state independently.'
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Comment out any occurrences
+        of net.ipv4.conf.all.log_martians from /etc/sysctl.conf'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
     | bool)
 - block:
-  - name: Ensure sysctl net.ipv4.conf.all.log_martians is set
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Ensure sysctl net.ipv4.conf.all.log_martians
+      is set
     ansible.posix.sysctl:
       name: net.ipv4.conf.all.log_martians
       value: '{{ sysctl_net_ipv4_conf_all_log_martians_value }}'
-      sysctl_file: /etc/sysctl.conf
+      sysctl_file: /etc/sysctl.d/net_ipv4_conf_all_log_martians.conf
       state: present
       reload: true
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84000-9
     - DISA-STIG-RHEL-09-253025
@@ -121,25 +220,22 @@
     - sysctl_net_ipv4_conf_all_log_martians
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''Ensure sysctl net.ipv4.conf.all.log_martians is set'' (OpenSCAP is the score
-      gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Ensure
+      sysctl net.ipv4.conf.all.log_martians is set'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Ensure sysctl net.ipv4.conf.all.log_martians is set'' raised an error (module or templating) and
-        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces - Ensure sysctl net.ipv4.conf.all.log_martians
+        is set'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
+        the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_all_log_martians | default(true)
     | bool)
 - block:
-  - name: List /etc/sysctl.d/*.conf files
-    ansible.builtin.find:
-      paths:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Set fact for sysctl paths
+    ansible.builtin.set_fact:
+      sysctl_paths:
       - /etc/sysctl.d/
       - /run/sysctl.d/
       - /usr/local/lib/sysctl.d/
-      contains: ^[\s]*net.ipv4.conf.default.log_martians.*$
-      patterns: '*.conf'
-      file_type: any
-    register: find_sysctl_d
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84014-0
     - DISA-STIG-RHEL-09-253030
@@ -154,20 +250,56 @@
     - sysctl_net_ipv4_conf_default_log_martians
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default
+      - Set fact for sysctl paths'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Set fact for sysctl
+        paths'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
+        the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
+    | bool)
+- block:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Find all files that contain net.ipv4.conf.default.log_martians
+    ansible.builtin.shell:
+      cmd: find -L {{ sysctl_paths | join(" ") }} -type f -name '*.conf' | xargs grep -HP '^\s*net.ipv4.conf.default.log_martians\s*=\s*.*$'
+    register: find_all_values
+    check_mode: false
+    changed_when: false
+    failed_when: false
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84014-0
+    - DISA-STIG-RHEL-09-253030
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_default_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default
+      - Find all files that contain net.ipv4.conf.default.log_martians'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Find all files
+        that contain net.ipv4.conf.default.log_martians'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
     | bool)
 - block:
-  - name: Comment out any occurrences of net.ipv4.conf.default.log_martians from config files
-    ansible.builtin.replace:
-      path: '{{ item.path }}'
-      regexp: ^[\s]*net.ipv4.conf.default.log_martians
-      replace: '#net.ipv4.conf.default.log_martians'
-    loop: '{{ find_sysctl_d.files }}'
-    when: '"kernel" in ansible_facts.packages'
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Find all files that set net.ipv4.conf.default.log_martians
+      to correct value
+    ansible.builtin.shell:
+      cmd: find -L {{ sysctl_paths | join(" ") }} -type f -name '*.conf' | xargs grep -HP '^\s*net.ipv4.conf.default.log_martians\s*=\s*{{
+        sysctl_net_ipv4_conf_default_log_martians_value }}$'
+    register: find_correct_value
+    check_mode: false
+    changed_when: false
+    failed_when: false
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84014-0
     - DISA-STIG-RHEL-09-253030
@@ -182,23 +314,90 @@
     - sysctl_net_ipv4_conf_default_log_martians
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''Comment out any occurrences of net.ipv4.conf.default.log_martians from config
-      files'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default
+      - Find all files that set net.ipv4.conf.default.log_martians to correct value'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Comment out any occurrences of net.ipv4.conf.default.log_martians from config files'' raised an error
-        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
-        state independently.'
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Find all files
+        that set net.ipv4.conf.default.log_martians to correct value'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
     | bool)
 - block:
-  - name: Ensure sysctl net.ipv4.conf.default.log_martians is set
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Comment out any occurrences of
+      net.ipv4.conf.default.log_martians from config files
+    ansible.builtin.replace:
+      path: '{{ item | split(":") | first }}'
+      regexp: ^[\s]*net.ipv4.conf.default.log_martians
+      replace: '#net.ipv4.conf.default.log_martians'
+    loop: '{{ find_all_values.stdout_lines }}'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - find_correct_value.stdout_lines | length == 0 or find_all_values.stdout_lines | length > find_correct_value.stdout_lines
+      | length
+    tags:
+    - CCE-84014-0
+    - DISA-STIG-RHEL-09-253030
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_default_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default
+      - Comment out any occurrences of net.ipv4.conf.default.log_martians from config files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Comment out any
+        occurrences of net.ipv4.conf.default.log_martians from config files'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
+    | bool)
+- block:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Comment out any occurrences of
+      net.ipv4.conf.default.log_martians from /etc/sysctl.conf
+    ansible.builtin.replace:
+      path: '{{ item }}'
+      regexp: ^[\s]*net.ipv4.conf.default.log_martians
+      replace: '#net.ipv4.conf.default.log_martians'
+    with_fileglob:
+    - /etc/sysctl.conf
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84014-0
+    - DISA-STIG-RHEL-09-253030
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5(3)(a)
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_conf_default_log_martians
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default
+      - Comment out any occurrences of net.ipv4.conf.default.log_martians from /etc/sysctl.conf'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Comment out any
+        occurrences of net.ipv4.conf.default.log_martians from /etc/sysctl.conf'' raised an error (module or templating) and
+        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
+    | bool)
+- block:
+  - name: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Ensure sysctl net.ipv4.conf.default.log_martians
+      is set
     ansible.posix.sysctl:
       name: net.ipv4.conf.default.log_martians
       value: '{{ sysctl_net_ipv4_conf_default_log_martians_value }}'
-      sysctl_file: /etc/sysctl.conf
+      sysctl_file: /etc/sysctl.d/net_ipv4_conf_default_log_martians.conf
       state: present
       reload: true
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84014-0
     - DISA-STIG-RHEL-09-253030
@@ -213,25 +412,22 @@
     - sysctl_net_ipv4_conf_default_log_martians
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''Ensure sysctl net.ipv4.conf.default.log_martians is set'' (OpenSCAP is the
-      score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default
+      - Ensure sysctl net.ipv4.conf.default.log_martians is set'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Ensure sysctl net.ipv4.conf.default.log_martians is set'' raised an error (module or templating)
-        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default - Ensure sysctl
+        net.ipv4.conf.default.log_martians is set'' raised an error (module or templating) and was skipped; continuing so
+        later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_conf_default_log_martians | default(true)
     | bool)
 - block:
-  - name: List /etc/sysctl.d/*.conf files
-    ansible.builtin.find:
-      paths:
+  - name: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Set fact for sysctl paths
+    ansible.builtin.set_fact:
+      sysctl_paths:
       - /etc/sysctl.d/
       - /run/sysctl.d/
       - /usr/local/lib/sysctl.d/
-      contains: ^[\s]*net.ipv4.icmp_ignore_bogus_error_responses.*$
-      patterns: '*.conf'
-      file_type: any
-    register: find_sysctl_d
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84015-7
     - DISA-STIG-RHEL-09-253060
@@ -249,20 +445,96 @@
     - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''List /etc/sysctl.d/*.conf files'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces
+      - Set fact for sysctl paths'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''List /etc/sysctl.d/*.conf files'' raised an error (module or templating) and was skipped; continuing
-        so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Set fact for sysctl
+        paths'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
+        the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
     | default(true) | bool)
 - block:
-  - name: Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files
+  - name: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Find all files that contain net.ipv4.icmp_ignore_bogus_error_responses
+    ansible.builtin.shell:
+      cmd: find -L {{ sysctl_paths | join(" ") }} -type f -name '*.conf' | xargs grep -HP '^\s*net.ipv4.icmp_ignore_bogus_error_responses\s*=\s*.*$'
+    register: find_all_values
+    check_mode: false
+    changed_when: false
+    failed_when: false
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84015-7
+    - DISA-STIG-RHEL-09-253060
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5
+    - PCI-DSS-Req-1.4.3
+    - PCI-DSSv4-1.4
+    - PCI-DSSv4-1.4.2
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces
+      - Find all files that contain net.ipv4.icmp_ignore_bogus_error_responses'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Find all files
+        that contain net.ipv4.icmp_ignore_bogus_error_responses'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    | default(true) | bool)
+- block:
+  - name: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Find all files that set net.ipv4.icmp_ignore_bogus_error_responses
+      to correct value
+    ansible.builtin.shell:
+      cmd: find -L {{ sysctl_paths | join(" ") }} -type f -name '*.conf' | xargs grep -HP '^\s*net.ipv4.icmp_ignore_bogus_error_responses\s*=\s*{{
+        sysctl_net_ipv4_icmp_ignore_bogus_error_responses_value }}$'
+    register: find_correct_value
+    check_mode: false
+    changed_when: false
+    failed_when: false
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84015-7
+    - DISA-STIG-RHEL-09-253060
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5
+    - PCI-DSS-Req-1.4.3
+    - PCI-DSSv4-1.4
+    - PCI-DSSv4-1.4.2
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces
+      - Find all files that set net.ipv4.icmp_ignore_bogus_error_responses to correct value'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Find all files
+        that set net.ipv4.icmp_ignore_bogus_error_responses to correct value'' raised an error (module or templating) and
+        was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    | default(true) | bool)
+- block:
+  - name: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Comment out any occurrences of
+      net.ipv4.icmp_ignore_bogus_error_responses from config files
     ansible.builtin.replace:
-      path: '{{ item.path }}'
+      path: '{{ item | split(":") | first }}'
       regexp: ^[\s]*net.ipv4.icmp_ignore_bogus_error_responses
       replace: '#net.ipv4.icmp_ignore_bogus_error_responses'
-    loop: '{{ find_sysctl_d.files }}'
-    when: '"kernel" in ansible_facts.packages'
+    loop: '{{ find_all_values.stdout_lines }}'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - find_correct_value.stdout_lines | length == 0 or find_all_values.stdout_lines | length > find_correct_value.stdout_lines
+      | length
     tags:
     - CCE-84015-7
     - DISA-STIG-RHEL-09-253060
@@ -280,23 +552,61 @@
     - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses
-      from config files'' (OpenSCAP is the score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces
+      - Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files'' (OpenSCAP is the score
+      gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files'' raised
-        an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
-        system state independently.'
+      msg: 'StigForge: ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Comment out any
+        occurrences of net.ipv4.icmp_ignore_bogus_error_responses from config files'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
     | default(true) | bool)
 - block:
-  - name: Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set
+  - name: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Comment out any occurrences of
+      net.ipv4.icmp_ignore_bogus_error_responses from /etc/sysctl.conf
+    ansible.builtin.replace:
+      path: '{{ item }}'
+      regexp: ^[\s]*net.ipv4.icmp_ignore_bogus_error_responses
+      replace: '#net.ipv4.icmp_ignore_bogus_error_responses'
+    with_fileglob:
+    - /etc/sysctl.conf
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - CCE-84015-7
+    - DISA-STIG-RHEL-09-253060
+    - NIST-800-171-3.1.20
+    - NIST-800-53-CM-7(a)
+    - NIST-800-53-CM-7(b)
+    - NIST-800-53-SC-5
+    - PCI-DSS-Req-1.4.3
+    - PCI-DSSv4-1.4
+    - PCI-DSSv4-1.4.2
+    - disable_strategy
+    - low_complexity
+    - medium_disruption
+    - reboot_required
+    - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    - unknown_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces
+      - Comment out any occurrences of net.ipv4.icmp_ignore_bogus_error_responses from /etc/sysctl.conf'' (OpenSCAP is the
+      score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Comment out any
+        occurrences of net.ipv4.icmp_ignore_bogus_error_responses from /etc/sysctl.conf'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
+    | default(true) | bool)
+- block:
+  - name: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses
+      is set
     ansible.posix.sysctl:
       name: net.ipv4.icmp_ignore_bogus_error_responses
       value: '{{ sysctl_net_ipv4_icmp_ignore_bogus_error_responses_value }}'
-      sysctl_file: /etc/sysctl.conf
+      sysctl_file: /etc/sysctl.d/net_ipv4_icmp_ignore_bogus_error_responses.conf
       state: present
       reload: true
-    when: '"kernel" in ansible_facts.packages'
+    when: '"kernel-core" in ansible_facts.packages'
     tags:
     - CCE-84015-7
     - DISA-STIG-RHEL-09-253060
@@ -314,23 +624,25 @@
     - sysctl_net_ipv4_icmp_ignore_bogus_error_responses
     - unknown_severity
   rescue:
-  - name: 'StigForge: continue after error in ''Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set'' (OpenSCAP
-      is the score gate)'
+  - name: 'StigForge: continue after error in ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces
+      - Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set'' (OpenSCAP is the score gate)'
     ansible.builtin.debug:
-      msg: 'StigForge: ''Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses is set'' raised an error (module or templating)
-        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+      msg: 'StigForge: ''Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces - Ensure sysctl net.ipv4.icmp_ignore_bogus_error_responses
+        is set'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
+        the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sysctl_net_ipv4_icmp_ignore_bogus_error_responses
     | default(true) | bool)
 - block:
   - name: 'Add nodev Option to /home: Check information associated to mountpoint'
-    command: findmnt --fstab '/home'
+    ansible.builtin.command: findmnt --fstab '/home'
     register: device_name
     failed_when: device_name.rc > 1
     changed_when: false
+    check_mode: false
     when:
-    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
-      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
-      "podman", "container"] ) )
+    - ( not ( "kernel-core" in ansible_facts.packages and "bootc" in ansible_facts.packages and not "openshift-kubelet" in
+      ansible_facts.packages and "ostree" in ansible_proc_cmdline ) and not ( ansible_virtualization_type in ["docker", "lxc",
+      "openvz", "podman", "container"] ) )
     - '"/home" in ansible_mounts | map(attribute="mount") | list'
     tags:
     - CCE-83871-4
@@ -353,12 +665,12 @@
     set_fact:
       mount_info: '{{ mount_info|default({})|combine({item.0: item.1}) }}'
     with_together:
-    - '{{ device_name.stdout_lines[0].split() | list | lower }}'
+    - '{{ device_name.stdout_lines[0].split() | map(''lower'') | list }}'
     - '{{ device_name.stdout_lines[1].split() | list }}'
     when:
-    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
-      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
-      "podman", "container"] ) )
+    - ( not ( "kernel-core" in ansible_facts.packages and "bootc" in ansible_facts.packages and not "openshift-kubelet" in
+      ansible_facts.packages and "ostree" in ansible_proc_cmdline ) and not ( ansible_virtualization_type in ["docker", "lxc",
+      "openvz", "podman", "container"] ) )
     - '"/home" in ansible_mounts | map(attribute="mount") | list'
     - device_name.stdout is defined and device_name.stdout_lines is defined
     - (device_name.stdout | length > 0)
@@ -392,9 +704,9 @@
       - ''
       - defaults
     when:
-    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
-      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
-      "podman", "container"] ) )
+    - ( not ( "kernel-core" in ansible_facts.packages and "bootc" in ansible_facts.packages and not "openshift-kubelet" in
+      ansible_facts.packages and "ostree" in ansible_proc_cmdline ) and not ( ansible_virtualization_type in ["docker", "lxc",
+      "openvz", "podman", "container"] ) )
     - '"/home" in ansible_mounts | map(attribute="mount") | list'
     - ("--fstab" | length == 0)
     - device_name.stdout is defined and device_name.stdout_lines is defined
@@ -419,13 +731,14 @@
 - block:
   - name: 'Add nodev Option to /home: Make sure nodev option is part of the to /home options'
     set_fact:
-      mount_info: '{{ mount_info | combine( {''options'':''''~mount_info.options~'',nodev'' }) }}'
+      mount_info: '{{ mount_info | combine( {''options'':''''~(mount_info.options | default(''''))~('','' if (mount_info.options
+        | default('''')) else '''')~''nodev'' }) }}'
     when:
-    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
-      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
-      "podman", "container"] ) )
+    - ( not ( "kernel-core" in ansible_facts.packages and "bootc" in ansible_facts.packages and not "openshift-kubelet" in
+      ansible_facts.packages and "ostree" in ansible_proc_cmdline ) and not ( ansible_virtualization_type in ["docker", "lxc",
+      "openvz", "podman", "container"] ) )
     - '"/home" in ansible_mounts | map(attribute="mount") | list'
-    - mount_info is defined and "nodev" not in mount_info.options
+    - mount_info is defined and "nodev" not in (mount_info.options | default(''))
     tags:
     - CCE-83871-4
     - DISA-STIG-RHEL-09-231045
@@ -445,16 +758,21 @@
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_mount_option_home_nodev | default(true) | bool)
 - block:
   - name: 'Add nodev Option to /home: Ensure /home is mounted with nodev option'
-    mount:
+    ansible.posix.mount:
       path: /home
-      src: '{{ mount_info.source }}'
-      opts: '{{ mount_info.options }}'
+      src: '{{ mount_info.source | default('''') }}'
+      opts: '{{ mount_info.options | default('''') }}'
       state: mounted
-      fstype: '{{ mount_info.fstype }}'
+      fstype: '{{ mount_info.fstype | default('''') }}'
+    register: mount_result
+    failed_when:
+    - mount_result is failed
+    - '''target is busy'' not in (mount_result.msg | default(''''))'
+    - '''already mounted'' not in (mount_result.msg | default(''''))'
     when:
-    - ( not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
-      and not "openshift-kubelet" in ansible_facts.packages ) and not ( ansible_virtualization_type in ["docker", "lxc", "openvz",
-      "podman", "container"] ) )
+    - ( not ( "kernel-core" in ansible_facts.packages and "bootc" in ansible_facts.packages and not "openshift-kubelet" in
+      ansible_facts.packages and "ostree" in ansible_proc_cmdline ) and not ( ansible_virtualization_type in ["docker", "lxc",
+      "openvz", "podman", "container"] ) )
     - '"/home" in ansible_mounts | map(attribute="mount") | list'
     - mount_info is defined
     - (device_name.stdout is defined and (device_name.stdout | length > 0)) or ("--fstab" | length == 0)
