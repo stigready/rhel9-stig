@@ -1,5 +1,5 @@
 ---
-# StigForge supplements for RHEL 9 STIG — not overwritten by `stigforge generate`.
+# StigForge supplements for RHEL 9 STIG - not overwritten by `stigforge generate`.
 # Extends rhel8_stig supplement patterns + rootfiles/umask/pam_wheel gaps in docker verify.
 
 - name: Ensure GPG check enabled for local packages (dnf)
@@ -13,16 +13,16 @@
   tags:
     - ensure_gpgcheck_local_packages
 
-# RHEL-09-252035 / network_configure_name_resolution — "Configure Multiple DNS Servers
+# RHEL-09-252035 / network_configure_name_resolution - "Configure Multiple DNS Servers
 # in /etc/resolv.conf". The STIG offers two branches: if nsswitch has no `dns`, resolv.conf
 # must be EMPTY; if it has `dns`, resolv.conf must carry >=2 nameservers.
 #
-# This role used to take the empty branch — it stripped `dns` from nsswitch and truncated
+# This role used to take the empty branch - it stripped `dns` from nsswitch and truncated
 # /etc/resolv.conf. The OVAL check passed and name resolution was gone. On 2026-09-20 that
 # failed five consecutive release legs across rhel-8, rhel-9 and alma-9; the alma-9 leg named
 # it outright (`Curl error (6): Could not resolve host: mirrors.almalinux.org`), which also
 # shows the long-standing `rhsm-repomd-unreachable` RCA was reading a DNS failure as a
-# subscription one — Alma uses no RHSM. It was not only a build defect: a customer's STIG AMI
+# subscription one - Alma uses no RHSM. It was not only a build defect: a customer's STIG AMI
 # would have booted with no resolver.
 #
 # The rule's own rationale forbids that reading: "A failure in name resolution could lead to
@@ -31,12 +31,12 @@
 # resolv.conf causes exactly what the rule exists to prevent.
 #
 # So: keep `dns` in nsswitch and never truncate resolv.conf here. The >=2-nameserver half is
-# deliberately NOT done at this point — writing resolv.conf mid-hardening is what broke the
+# deliberately NOT done at this point - writing resolv.conf mid-hardening is what broke the
 # build, and with NetworkManager `dns=default` (var_networkmanager_dns_mode) NM owns the file
 # and would overwrite any static write after the FIPS reboot anyway. That half is tracked
 # separately; until it lands, this rule scores as it truly is rather than being satisfied by
 # breaking the system.
-- name: Keep DNS in host resolution order (STIG name resolution — RHEL-09-252035)
+- name: Keep DNS in host resolution order (STIG name resolution - RHEL-09-252035)
   ansible.builtin.lineinfile:
     path: /etc/nsswitch.conf
     regexp: '^hosts:'
@@ -97,15 +97,15 @@
   tags:
     - use_pam_wheel_for_su
 
-# FIPS mode — RHEL-09-671010. Owner decision 2026-09-20: enablement belongs to the ROLE, and it is
+# FIPS mode - RHEL-09-671010. Owner decision 2026-09-20: enablement belongs to the ROLE, and it is
 # NOT a toggle. FIPS is derived from the STIG profile, never chosen: every `stig` image is
 # FIPS and nothing else ever is. A per-rule variable would make it a choice, so these tasks
-# deliberately carry only DISA/CCE tags — the generator derives a toggle from an SSG rule-id
+# deliberately carry only DISA/CCE tags - the generator derives a toggle from an SSG rule-id
 # tag, and these do not match that pattern, so no `{{ role }}_enable_fips_mode` is created.
 #
 # SSG ships no ANSIBLE remediation for this rule (only `urn:xccdf:fix:script:sh` and an
 # osbuild blueprint), which is why the generator emits nothing for it and it has to live
-# here in the supplement — exactly what the supplement is for.
+# here in the supplement - exactly what the supplement is for.
 #
 # Scope is enablement only. The reboot, the post-reboot verification, the `boot=UUID=`
 # cmdline repair for a separate /boot, and pinning the FIPS kernel against the autoremover
@@ -141,7 +141,7 @@
 #   - kernel_module_{dccp,freevxfs,hfs,hfsplus,jffs2,udf}_disabled are CIS rules, not STIG.
 #     Only cramfs (RHEL-09-231195), sctp (RHEL-09-213060) and tipc (RHEL-09-213065) are in
 #     the stig profile. On Ubuntu NONE of the nine are.
-#   - sysctl_fs_suid_dumpable is in anssi/ccn/hipaa/pci-dss on RHEL and CIS on Ubuntu —
+#   - sysctl_fs_suid_dumpable is in anssi/ccn/hipaa/pci-dss on RHEL and CIS on Ubuntu -
 #     in neither the RHEL stig nor the RHEL cis profile.
 #
 # StigReady applies them to every hardened image anyway: CIS-grade module blacklisting and
@@ -150,7 +150,7 @@
 # benchmark requirement.
 #
 # Tagged DISA/CCE only where a real identifier exists. The rest carry no rule-id tag on
-# purpose — the generator derives a toggle from an SSG rule-id tag, and a product decision
+# purpose - the generator derives a toggle from an SSG rule-id tag, and a product decision
 # is not a per-rule opt-out. Idempotent: harmless where the profile already covers a module.
 - name: Product hardening | Ensure kernel module 'cramfs' is disabled
   ansible.builtin.copy:

@@ -1,4 +1,4 @@
-# Source: ComplianceAsCode/content (scap-security-guide) — BSD-3-Clause
+# Source: ComplianceAsCode/content (scap-security-guide) - BSD-3-Clause
 # Imported by StigForge; cloud-breaker tasks stripped per policy/cloud-ami.yml
 ---
 - block:
@@ -2269,3 +2269,36 @@
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_disable_empty_passwords | default(true) | bool)
+- block:
+  - name: FIPS | Check whether FIPS mode is already enabled
+    ansible.builtin.command: fips-mode-setup --check
+    register: stigforge_fips_check
+    changed_when: false
+    failed_when: false
+    tags:
+    - DISA-STIG-RHEL-09-671010
+    - CCE-88742-2
+    - high_severity
+  rescue:
+  - name: 'StigForge: continue after error in ''FIPS | Check whether FIPS mode is already enabled'' (OpenSCAP is the score
+      gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''FIPS | Check whether FIPS mode is already enabled'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- block:
+  - name: FIPS | Enable FIPS mode (RHEL-09-671010)
+    ansible.builtin.command: fips-mode-setup --enable
+    register: stigforge_fips_enable
+    when: '''FIPS mode is enabled'' not in (stigforge_fips_check.stdout | default(''''))'
+    changed_when: stigforge_fips_enable.rc == 0
+    failed_when: stigforge_fips_enable.rc != 0
+    tags:
+    - DISA-STIG-RHEL-09-671010
+    - CCE-88742-2
+    - high_severity
+    - reboot_required
+  rescue:
+  - name: 'StigForge: continue after error in ''FIPS | Enable FIPS mode (RHEL-09-671010)'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''FIPS | Enable FIPS mode (RHEL-09-671010)'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'

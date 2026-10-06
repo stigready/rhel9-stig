@@ -1,5 +1,5 @@
 ---
-# Phase B layout v2 — prelim then profile tasks ([role-layout-redhat.md](docs/role-layout-redhat.md)).
+# Phase B layout v2 - prelim then profile tasks ([role-layout-redhat.md](https://github.com/stigready/claude-agents/blob/main/docs/stigforge/role-layout-redhat.md)).
 - name: StigForge prelim (rhel9_stig)
   ansible.builtin.import_tasks: prelim.yml
   tags: [stigforge, prelim, rhel9_stig]
