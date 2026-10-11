@@ -46,7 +46,6 @@ rhel9stig_aide_scan_notification: true
 rhel9stig_aide_use_fips_hashes: true
 rhel9stig_aide_verify_acls: true
 rhel9stig_aide_verify_ext_attributes: true
-rhel9stig_always: true
 rhel9stig_audit_privileged_commands_init: true
 rhel9stig_audit_privileged_commands_poweroff: true
 rhel9stig_audit_privileged_commands_reboot: true

@@ -21,6 +21,14 @@
     ansible.builtin.debug:
       msg: 'StigForge: ''Ensure rng-tools is installed'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+- name: 'StigForge: refresh package facts after ''Ensure rng-tools is installed'' installed a package (stigforge#83)'
+  ansible.builtin.package_facts:
+    manager: auto
+  tags:
+  - low_severity
+  - always
+  - stigforge
+  - facts
 - block:
   - name: Ensure policycoreutils is installed
     ansible.builtin.package:
@@ -43,6 +51,14 @@
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_package_policycoreutils_installed | default(true)
     | bool)
+- name: 'StigForge: refresh package facts after ''Ensure policycoreutils is installed'' installed a package (stigforge#83)'
+  ansible.builtin.package_facts:
+    manager: auto
+  tags:
+  - low_severity
+  - always
+  - stigforge
+  - facts
 - block:
   - name: 'Uninstall nfs-utils Package: Ensure nfs-utils is removed'
     ansible.builtin.package:
