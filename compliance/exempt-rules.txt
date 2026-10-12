@@ -31,4 +31,3 @@ sssd_enable_smartcards
 sssd_offline_cred_expiration
 sudo_remove_nopasswd
 sudo_require_authentication
-sudo_require_reauthentication
