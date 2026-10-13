@@ -32,6 +32,7 @@ rhel9stig_accounts_password_set_min_life_existing: true
 rhel9stig_accounts_passwords_pam_faillock_audit: true
 rhel9stig_accounts_passwords_pam_faillock_deny_root: true
 rhel9stig_accounts_passwords_pam_faillock_dir: true
+rhel9stig_accounts_passwords_pam_faillock_unlock_time: true
 rhel9stig_accounts_tmout: true
 rhel9stig_accounts_umask_etc_bashrc: true
 rhel9stig_accounts_umask_etc_csh_cshrc: true

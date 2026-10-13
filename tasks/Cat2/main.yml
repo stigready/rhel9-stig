@@ -57227,3 +57227,43 @@
         error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
         system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_chronyd_server_directive | default(true) | bool)
+- block:
+  - name: Set faillock deny, fail_interval and unlock_time in faillock.conf (STIG account lockout)
+    ansible.builtin.lineinfile:
+      path: /etc/security/faillock.conf
+      regexp: ^\s*#?\s*{{ item.key }}\s*=
+      line: '{{ item.key }} = {{ item.value }}'
+      create: true
+      owner: root
+      group: root
+      mode: '0644'
+    loop:
+    - key: deny
+      value: '{{ var_accounts_passwords_pam_faillock_deny | default(''3'') }}'
+      rule: accounts_passwords_pam_faillock_deny
+    - key: fail_interval
+      value: '{{ var_accounts_passwords_pam_faillock_fail_interval | default(''900'') }}'
+      rule: accounts_passwords_pam_faillock_interval
+    - key: unlock_time
+      value: '{{ var_accounts_passwords_pam_faillock_unlock_time | default(''0'') }}'
+      rule: accounts_passwords_pam_faillock_unlock_time
+    loop_control:
+      label: '{{ item.key }}'
+    tags:
+    - accounts_passwords_pam_faillock_deny
+    - accounts_passwords_pam_faillock_interval
+    - accounts_passwords_pam_faillock_unlock_time
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Set faillock deny, fail_interval and unlock_time in faillock.conf (STIG account
+      lockout)'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Set faillock deny, fail_interval and unlock_time in faillock.conf (STIG account lockout)'' raised
+        an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_passwords_pam_faillock_unlock_time | default(true)
+    | bool)

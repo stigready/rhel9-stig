@@ -366,3 +366,33 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+# accounts_passwords_pam_faillock_deny / _interval / _unlock_time (RHEL-09-411075, -411080, -411085).
+# The role defines var_accounts_passwords_pam_faillock_deny/_fail_interval/_unlock_time, but the
+# generated rhel9_stig body carries no task for these three rules, so /etc/security/faillock.conf
+# never received the values (alma-9:stig and rocky-9:stig 2026-10-13: the OVAL test
+# *_parameter_faillock_conf was false, the pam.d structure tests were true).
+- name: Set faillock deny, fail_interval and unlock_time in faillock.conf (STIG account lockout)
+  ansible.builtin.lineinfile:
+    path: /etc/security/faillock.conf
+    regexp: '^\s*#?\s*{{ item.key }}\s*='
+    line: '{{ item.key }} = {{ item.value }}'
+    create: true
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+  - {key: deny, value: "{{ var_accounts_passwords_pam_faillock_deny | default('3') }}", rule: accounts_passwords_pam_faillock_deny}
+  - {key: fail_interval, value: "{{ var_accounts_passwords_pam_faillock_fail_interval | default('900') }}", rule: accounts_passwords_pam_faillock_interval}
+  - {key: unlock_time, value: "{{ var_accounts_passwords_pam_faillock_unlock_time | default('0') }}", rule: accounts_passwords_pam_faillock_unlock_time}
+  loop_control:
+    label: '{{ item.key }}'
+  tags:
+  - accounts_passwords_pam_faillock_deny
+  - accounts_passwords_pam_faillock_interval
+  - accounts_passwords_pam_faillock_unlock_time
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
