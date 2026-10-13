@@ -31,3 +31,28 @@
   - medium_severity
   - no_reboot_needed
   - stigforge_gapfill
+
+# The generated body runs configure_crypto_policy (`update-crypto-policies --set FIPS:STIG`) BEFORE the task
+# that writes the STIG sub-policy module (fips_custom_stig_sub_policy), so the first call died with
+# "Unknown policy `STIG`: file `STIG.pmod` not found" (alma-9:stig 2026-10-13: one ignored fatal, review
+# CONCERNS). Write the same module line first; the later generated task is then a no-op.
+# Tagged high_severity so the generator files it in Cat1, ahead of configure_crypto_policy (Cat1 runs
+# before Cat2); a medium_severity tag put it in Cat2, after the policy call.
+- name: Create the STIG crypto sub-policy module before the policy is selected (fips_custom_stig_sub_policy)
+  ansible.builtin.lineinfile:
+    path: /etc/crypto-policies/policies/modules/STIG.pmod
+    owner: root
+    group: root
+    mode: '0644'
+    line: cipher@SSH=AES-256-GCM AES-256-CTR AES-128-GCM AES-128-CTR
+    create: true
+    regexp: cipher@SSH
+  when: '"kernel-core" in ansible_facts.packages'
+  tags:
+  - fips_custom_stig_sub_policy
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - high_severity
+  - no_reboot_needed
+  - stigforge_gapfill

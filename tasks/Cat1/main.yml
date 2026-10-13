@@ -2,6 +2,33 @@
 # Imported by StigForge; cloud-breaker tasks stripped per policy/cloud-ami.yml
 ---
 - block:
+  - name: Create the STIG crypto sub-policy module before the policy is selected (fips_custom_stig_sub_policy)
+    ansible.builtin.lineinfile:
+      path: /etc/crypto-policies/policies/modules/STIG.pmod
+      owner: root
+      group: root
+      mode: '0644'
+      line: cipher@SSH=AES-256-GCM AES-256-CTR AES-128-GCM AES-128-CTR
+      create: true
+      regexp: cipher@SSH
+    when: '"kernel-core" in ansible_facts.packages'
+    tags:
+    - fips_custom_stig_sub_policy
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - high_severity
+    - no_reboot_needed
+    - stigforge_gapfill
+  rescue:
+  - name: 'StigForge: continue after error in ''Create the STIG crypto sub-policy module before the policy is selected (fips_custom_stig_sub_policy)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Create the STIG crypto sub-policy module before the policy is selected (fips_custom_stig_sub_policy)''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_fips_custom_stig_sub_policy | default(true) | bool)
+- block:
   - name: 'Uninstall vsftpd Package: Ensure vsftpd is removed'
     ansible.builtin.package:
       name: vsftpd
