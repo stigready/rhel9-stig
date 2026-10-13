@@ -1,0 +1,33 @@
+# StigForge-owned prerequisite for the file_permissions_cron_not_modified rule
+# (CCE-90309-6, DISA-STIG-RHEL-09-232040), run BEFORE the generated body.
+#
+# The playbook restores package ownership and permissions with `rpm --setugids crontabs` and
+# `rpm --setperms crontabs`. StigReady images are built with tsflags=nodocs, so crontabs' two man
+# pages (/usr/share/man/man4/crontabs.4.gz, run-parts.4.gz) are not on disk and both commands exit 1
+# ("chown: cannot access ..."). The role's rescue wrapper swallowed it, but the build review counts
+# the fatal ("2 ignored/rescued fatal(s)": rhel-9:stig 2026-10-13, CONCERNS). Reinstall the package
+# with docs so every packaged file exists and the rpm restore succeeds. Verified in a Rocky 9
+# container: nodocs install -> both rc=1; reinstall with tsflags= -> both rc=0.
+---
+# One self-contained task: the generator files tasks into Cat1/Cat2/Cat3/uncategorized by rule tag, so a
+# stat + reinstall pair would be split across files and the stat could run AFTER the reinstall.
+- name: Reinstall crontabs with its documentation so rpm can restore every packaged file
+  ansible.builtin.shell:
+    cmd: |
+      if [ -e /usr/share/man/man4/crontabs.4.gz ]; then
+        echo "crontabs docs present"
+      else
+        dnf -y reinstall --setopt=tsflags= crontabs && echo "crontabs reinstalled with docs"
+      fi
+    executable: /bin/bash
+  register: stigforge_crontabs_reinstall
+  changed_when: "'reinstalled' in stigforge_crontabs_reinstall.stdout"
+  when: '"crontabs" in ansible_facts.packages'
+  tags:
+  - file_permissions_cron_not_modified
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - stigforge_gapfill

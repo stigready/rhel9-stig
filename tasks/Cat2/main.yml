@@ -2,6 +2,32 @@
 # Imported by StigForge; cloud-breaker tasks stripped per policy/cloud-ami.yml
 ---
 - block:
+  - name: Reinstall crontabs with its documentation so rpm can restore every packaged file
+    ansible.builtin.shell:
+      cmd: "if [ -e /usr/share/man/man4/crontabs.4.gz ]; then\n  echo \"crontabs docs present\"\nelse\n  dnf -y reinstall\
+        \ --setopt=tsflags= crontabs && echo \"crontabs reinstalled with docs\"\nfi\n"
+      executable: /bin/bash
+    register: stigforge_crontabs_reinstall
+    changed_when: '''reinstalled'' in stigforge_crontabs_reinstall.stdout'
+    when: '"crontabs" in ansible_facts.packages'
+    tags:
+    - file_permissions_cron_not_modified
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+    - stigforge_gapfill
+  rescue:
+  - name: 'StigForge: continue after error in ''Reinstall crontabs with its documentation so rpm can restore every packaged
+      file'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Reinstall crontabs with its documentation so rpm can restore every packaged file'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_file_permissions_cron_not_modified | default(true)
+    | bool)
+- block:
   - name: Ensure aide is installed
     ansible.builtin.package:
       name: aide
