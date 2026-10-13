@@ -57103,3 +57103,101 @@
       msg: 'StigForge: ''Write Audit Logs to the Disk'' raised an error (module or templating) and was skipped; continuing
         so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_auditd_write_logs | default(true) | bool)
+- block:
+  - name: AIDE audit tools carry the selinux attribute (aide_check_audit_tools, AlmaLinux 9)
+    ansible.builtin.lineinfile:
+      path: /etc/aide.conf
+      regexp: ^{{ item }}\s
+      line: '{{ item }} p+i+n+u+g+s+b+acl+selinux+xattrs+sha512'
+    loop:
+    - /usr/sbin/auditctl
+    - /usr/sbin/auditd
+    - /usr/sbin/ausearch
+    - /usr/sbin/aureport
+    - /usr/sbin/autrace
+    - /usr/sbin/augenrules
+    when:
+    - ansible_facts['distribution'] == 'AlmaLinux'
+    - '"aide" in ansible_facts.packages'
+    tags:
+    - aide_check_audit_tools
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''AIDE audit tools carry the selinux attribute (aide_check_audit_tools, AlmaLinux
+      9)'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''AIDE audit tools carry the selinux attribute (aide_check_audit_tools, AlmaLinux 9)'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_aide_check_audit_tools | default(true) | bool)
+- block:
+  - name: Find the sshd drop-in configuration files
+    ansible.builtin.find:
+      paths: /etc/ssh/sshd_config.d
+      patterns: '*.conf'
+    register: stigforge_sshd_dropins
+    tags:
+    - file_permissions_sshd_drop_in_config
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Find the sshd drop-in configuration files'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Find the sshd drop-in configuration files'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_file_permissions_sshd_drop_in_config | default(true)
+    | bool)
+- block:
+  - name: Set sshd drop-in files to 0600 root:root (file_permissions_sshd_drop_in_config)
+    ansible.builtin.file:
+      path: '{{ item.path }}'
+      owner: root
+      group: root
+      mode: '0600'
+    loop: '{{ stigforge_sshd_dropins.files | default([]) }}'
+    tags:
+    - file_permissions_sshd_drop_in_config
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Set sshd drop-in files to 0600 root:root (file_permissions_sshd_drop_in_config)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Set sshd drop-in files to 0600 root:root (file_permissions_sshd_drop_in_config)'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_file_permissions_sshd_drop_in_config | default(true)
+    | bool)
+- block:
+  - name: Configure the Amazon Time Sync Service as a chrony server (chronyd_server_directive)
+    ansible.builtin.lineinfile:
+      path: /etc/chrony.conf
+      regexp: ^server\s
+      line: server 169.254.169.123 prefer iburst minpoll 4 maxpoll 4
+      create: true
+      mode: '0644'
+    tags:
+    - chronyd_server_directive
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure the Amazon Time Sync Service as a chrony server (chronyd_server_directive)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure the Amazon Time Sync Service as a chrony server (chronyd_server_directive)'' raised an
+        error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_chronyd_server_directive | default(true) | bool)

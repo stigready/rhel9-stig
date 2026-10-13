@@ -138,6 +138,7 @@ rhel9stig_chronyd_client_only: true
 rhel9stig_chronyd_configure_local_socket: true
 rhel9stig_chronyd_no_chronyc_network: true
 rhel9stig_chronyd_or_ntpd_set_maxpoll: true
+rhel9stig_chronyd_server_directive: true
 rhel9stig_chronyd_specify_remote_server: true
 rhel9stig_clean_components_post_updating: true
 rhel9stig_configure_bind_crypto_policy: true

@@ -289,3 +289,80 @@
   tags:
   - low_disruption
   - no_reboot_needed
+
+# 2026-10-13 alma-9:stig prove-out (OpenSCAP 92.8%, 13 non-exempt failures). Each task below is the
+# real remediation for a rule the generated body did not satisfy on the built image; the ARF named
+# the failing OVAL test for each (scripts/openscap-rule-evidence.py).
+
+# aide_check_audit_tools. AlmaLinux's datastream wants the selinux attribute on every audit tool
+# line in aide.conf (p+i+n+u+g+s+b+acl+selinux+xattrs+sha512); the RHEL playbook writes it without.
+- name: AIDE audit tools carry the selinux attribute (aide_check_audit_tools, AlmaLinux 9)
+  ansible.builtin.lineinfile:
+    path: /etc/aide.conf
+    regexp: '^{{ item }}\s'
+    line: '{{ item }} p+i+n+u+g+s+b+acl+selinux+xattrs+sha512'
+  loop:
+  - /usr/sbin/auditctl
+  - /usr/sbin/auditd
+  - /usr/sbin/ausearch
+  - /usr/sbin/aureport
+  - /usr/sbin/autrace
+  - /usr/sbin/augenrules
+  when:
+  - ansible_facts['distribution'] == 'AlmaLinux'
+  - '"aide" in ansible_facts.packages'
+  tags:
+  - aide_check_audit_tools
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
+# file_permissions_sshd_drop_in_config. Every file under sshd_config.d must be 0600 root:root; the
+# image's own drop-in (10-stigready.conf, written 0644) failed the rule. sshd reads these as root.
+- name: Find the sshd drop-in configuration files
+  ansible.builtin.find:
+    paths: /etc/ssh/sshd_config.d
+    patterns: '*.conf'
+  register: stigforge_sshd_dropins
+  tags:
+  - file_permissions_sshd_drop_in_config
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
+- name: Set sshd drop-in files to 0600 root:root (file_permissions_sshd_drop_in_config)
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    owner: root
+    group: root
+    mode: '0600'
+  loop: '{{ stigforge_sshd_dropins.files | default([]) }}'
+  tags:
+  - file_permissions_sshd_drop_in_config
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
+# chronyd_server_directive. The rule needs at least one `server` time source and no `pool`; the cloud
+# image's chrony.conf carried neither. 169.254.169.123 is the Amazon Time Sync Service, the
+# AWS-recommended source and the one reachable from every VPC without internet access.
+- name: Configure the Amazon Time Sync Service as a chrony server (chronyd_server_directive)
+  ansible.builtin.lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^server\s'
+    line: 'server 169.254.169.123 prefer iburst minpoll 4 maxpoll 4'
+    create: true
+    mode: '0644'
+  tags:
+  - chronyd_server_directive
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
