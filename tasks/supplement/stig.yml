@@ -33,9 +33,12 @@
 # So: keep `dns` in nsswitch and never truncate resolv.conf here. The >=2-nameserver half is
 # deliberately NOT done at this point - writing resolv.conf mid-hardening is what broke the
 # build, and with NetworkManager `dns=default` (var_networkmanager_dns_mode) NM owns the file
-# and would overwrite any static write after the FIPS reboot anyway. That half is tracked
-# separately; until it lands, this rule scores as it truly is rather than being satisfied by
-# breaking the system.
+# and would overwrite any static write after the FIPS reboot anyway.
+#
+# Owner 2026-10-14: the AMI owner manages DNS. The rule is a tracked exception, not a gap:
+# policy/products/rhel9_stig.yml (`exempt:` and `exceptions:`) and the role README say what the
+# role does and what the AMI owner does. This task only guarantees `dns` stays in nsswitch; the
+# resolver stays as the build network provided it.
 - name: Keep DNS in host resolution order (STIG name resolution - RHEL-09-252035)
   ansible.builtin.lineinfile:
     path: /etc/nsswitch.conf
