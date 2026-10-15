@@ -33,5 +33,10 @@
     "version": "0.3.28",
     "role": "rhel9_stig",
     "matrix_status": "green"
+  },
+  {
+    "version": "0.3.29",
+    "role": "rhel9_stig",
+    "matrix_status": "green"
   }
 ]
