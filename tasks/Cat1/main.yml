@@ -2047,6 +2047,7 @@
       path: /etc/ssh/sshd_config
       regexp: (?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+
       state: absent
+      validate: /usr/sbin/sshd -t -f %s
     check_mode: true
     changed_when: false
     register: _config_file_has_parameter
@@ -2153,6 +2154,7 @@
       path: /etc/ssh/sshd_config
       regexp: (?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+no$
       state: absent
+      validate: /usr/sbin/sshd -t -f %s
     check_mode: true
     changed_when: false
     register: _config_file_correctly
@@ -2231,6 +2233,7 @@
         create: false
         regexp: (?i)(?i)^\s*{{ "PermitEmptyPasswords"| regex_escape }}\s+
         state: absent
+        validate: /usr/sbin/sshd -t -f %s
     - name: Check if /etc/ssh/sshd_config.d exists
       ansible.builtin.stat:
         path: /etc/ssh/sshd_config.d
