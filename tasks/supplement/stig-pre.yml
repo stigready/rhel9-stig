@@ -56,3 +56,36 @@
   - high_severity
   - no_reboot_needed
   - stigforge_gapfill
+
+# RHEL-09-255070 / RHEL-09-255075 (harden_sshd_macs_openssh_conf_crypto_policy, harden_sshd_macs_opensshserver_conf_crypto_policy).
+# The STIG profile's variable sshd_approved_macs (selector stig_rhel9) is exactly
+#   hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512
+# and the OVAL compares that against the MACs line crypto-policies writes to back-ends/openssh.config and opensshserver.config.
+# SSG ships no Ansible remediation for these two rules, so the generated body never set them, and `update-crypto-policies`
+# rewrites those back-end files under FIPS, which is why a direct edit of them was deferred. The durable place is the same
+# STIG sub-policy module as the cipher line: `mac@SSH = HMAC-SHA2-256 HMAC-SHA2-512` (crypto-policies derives the -etm
+# variants and lists them first, so the order matches the SSG variable). Verified on an AlmaLinux 9.8 guest, SELinux
+# enforcing, 2026-10-15: `update-crypto-policies --set FIPS:STIG` then both back-end files carried exactly the variable's
+# value, `sshd -t` passed, sshd restarted and a new login worked. (`HMAC-SHA2-256-ETM` is NOT a valid policy value.)
+# Tagged high_severity so the generator files it in Cat1 with the cipher line, before configure_crypto_policy selects the policy.
+- name: Add the STIG approved MACs to the STIG crypto sub-policy module (harden_sshd_macs_opensshserver_conf_crypto_policy)
+  ansible.builtin.lineinfile:
+    path: /etc/crypto-policies/policies/modules/STIG.pmod
+    owner: root
+    group: root
+    mode: '0644'
+    line: mac@SSH=HMAC-SHA2-256 HMAC-SHA2-512
+    create: true
+    regexp: '^mac@SSH'
+  when: '"kernel-core" in ansible_facts.packages'
+  tags:
+  - harden_sshd_macs_openssh_conf_crypto_policy
+  - harden_sshd_macs_opensshserver_conf_crypto_policy
+  - DISA-STIG-RHEL-09-255070
+  - DISA-STIG-RHEL-09-255075
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - high_severity
+  - no_reboot_needed
+  - stigforge_gapfill

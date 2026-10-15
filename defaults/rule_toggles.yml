@@ -263,6 +263,7 @@ rhel9stig_grub2_init_on_free: true
 rhel9stig_grub2_page_poison_argument: true
 rhel9stig_grub2_pti_argument: true
 rhel9stig_grub2_vsyscall_argument: true
+rhel9stig_harden_sshd_macs_opensshserver_conf_crypto_policy: true
 rhel9stig_kernel_module_atm_disabled: true
 rhel9stig_kernel_module_bluetooth_disabled: true
 rhel9stig_kernel_module_can_disabled: true
