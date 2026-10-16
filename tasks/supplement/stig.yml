@@ -445,3 +445,30 @@
   tags:
   - rsyslog_remote_access_monitoring
   - no_reboot_needed
+
+# ---------------------------------------------------------------------------------------------
+# Leave auditd running. The generated rules restart auditd after editing them (`service auditd restart`, more than once per role);
+# on rhel-9-arm64:cis-l2 (stigready, 2026-10-16) the second restart 14 s after the first stopped auditd and never started it. With
+# the rules immutable (-e 2) and nothing reading events, the audit backlog fills and every audited syscall waits, which wedged new
+# SSH sessions for an hour. Start it if needed (a no-op when running), then require a live auditd pid or fail the build.
+# No rule-id tag on purpose: a product guarantee about the role's own side effects, not a per-rule opt-out.
+# ---------------------------------------------------------------------------------------------
+- name: Product hardening | Ensure auditd is running after the role's audit changes
+  ansible.builtin.systemd:
+    name: auditd
+    state: started
+    enabled: true
+  tags:
+  - low_disruption
+  - no_reboot_needed
+
+- name: Product hardening | auditd must be running (a stopped auditd with immutable rules wedges every audited syscall)
+  ansible.builtin.command: auditctl -s
+  register: stigforge_auditd_status
+  changed_when: false
+  until: stigforge_auditd_status.stdout is regex('(?m)^pid [1-9][0-9]*$')
+  retries: 12
+  delay: 10
+  tags:
+  - low_disruption
+  - no_reboot_needed

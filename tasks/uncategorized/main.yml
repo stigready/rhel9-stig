@@ -1117,3 +1117,37 @@
         and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
     bool)
+- block:
+  - name: Product hardening | Ensure auditd is running after the role's audit changes
+    ansible.builtin.systemd:
+      name: auditd
+      state: started
+      enabled: true
+    tags:
+    - low_disruption
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in "Product hardening | Ensure auditd is running after the role''s audit changes"
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: "Product hardening | Ensure auditd is running after the role''s audit changes" raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+- block:
+  - name: Product hardening | auditd must be running (a stopped auditd with immutable rules wedges every audited syscall)
+    ansible.builtin.command: auditctl -s
+    register: stigforge_auditd_status
+    changed_when: false
+    until: stigforge_auditd_status.stdout is regex('(?m)^pid [1-9][0-9]*$')
+    retries: 12
+    delay: 10
+    tags:
+    - low_disruption
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Product hardening | auditd must be running (a stopped auditd with immutable
+      rules wedges every audited syscall)'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Product hardening | auditd must be running (a stopped auditd with immutable rules wedges every audited
+        syscall)'' raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates
+        the resulting system state independently.'
