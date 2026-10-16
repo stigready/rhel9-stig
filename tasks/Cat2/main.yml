@@ -57218,3 +57218,62 @@
         system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_passwords_pam_faillock_unlock_time | default(true)
     | bool)
+- block:
+  - name: Install the smart card packages for multifactor authentication (openssl-pkcs11)
+    ansible.builtin.dnf:
+      name:
+      - openssl-pkcs11
+      state: present
+    tags:
+    - install_smartcard_packages
+    - enable_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Install the smart card packages for multifactor authentication (openssl-pkcs11)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Install the smart card packages for multifactor authentication (openssl-pkcs11)'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_install_smartcard_packages | default(true) | bool)
+- name: 'StigForge: refresh package facts after ''Install the smart card packages for multifactor authentication (openssl-pkcs11)''
+    installed a package (stigforge#83)'
+  ansible.builtin.package_facts:
+    manager: auto
+  tags:
+  - medium_severity
+  - always
+  - stigforge
+  - facts
+- block:
+  - name: Monitor remote access methods in rsyslog (auth, authpriv and daemon to /var/log/secure)
+    ansible.builtin.copy:
+      dest: /etc/rsyslog.d/60-stigready-remote-access.conf
+      content: '# STIG rsyslog_remote_access_monitoring: log remote access methods (auth, authpriv, daemon).
+
+        auth.*;authpriv.*;daemon.* /var/log/secure
+
+        '
+      owner: root
+      group: root
+      mode: '0640'
+    register: stigforge_rsyslog_remote_access
+    tags:
+    - rsyslog_remote_access_monitoring
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Monitor remote access methods in rsyslog (auth, authpriv and daemon to /var/log/secure)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Monitor remote access methods in rsyslog (auth, authpriv and daemon to /var/log/secure)'' raised
+        an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)

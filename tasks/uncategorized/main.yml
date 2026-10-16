@@ -1100,3 +1100,20 @@
       msg: 'StigForge: ''Product hardening | Disable core dumps for SUID programs (fs.suid_dumpable)'' raised an error (module
         or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
         independently.'
+- block:
+  - name: Restart rsyslog after the remote-access monitoring rule changed
+    ansible.builtin.systemd:
+      name: rsyslog
+      state: restarted
+    when: stigforge_rsyslog_remote_access is changed
+    tags:
+    - rsyslog_remote_access_monitoring
+    - no_reboot_needed
+  rescue:
+  - name: 'StigForge: continue after error in ''Restart rsyslog after the remote-access monitoring rule changed'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Restart rsyslog after the remote-access monitoring rule changed'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)

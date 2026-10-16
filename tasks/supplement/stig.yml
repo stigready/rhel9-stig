@@ -399,3 +399,49 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+# ---------------------------------------------------------------------------------------------
+# install_smartcard_packages (RHEL-09-215075) and rsyslog_remote_access_monitoring (RHEL-09-652030). The SSG playbook carries no remediation for
+# either, so the generated role never applied them; stigready rhel-9:stig failed the OpenSCAP gate on both (2026-10-16, the first
+# RHEL 9 STIG scan on the pinned SSG 0.1.82). Both are ordinary configuration, applied rather than exempted. The rsyslog line is the
+# STIG's own fix and satisfies the three OVAL checks (auth.*, authpriv.*, daemon.*; tests/unit/test_el_stig_smartcard_rsyslog.py).
+# ---------------------------------------------------------------------------------------------
+- name: Install the smart card packages for multifactor authentication (openssl-pkcs11)
+  ansible.builtin.dnf:
+    name:
+    - openssl-pkcs11
+    state: present
+  tags:
+  - install_smartcard_packages
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
+- name: Monitor remote access methods in rsyslog (auth, authpriv and daemon to /var/log/secure)
+  ansible.builtin.copy:
+    dest: /etc/rsyslog.d/60-stigready-remote-access.conf
+    content: |
+      # STIG rsyslog_remote_access_monitoring: log remote access methods (auth, authpriv, daemon).
+      auth.*;authpriv.*;daemon.* /var/log/secure
+    owner: root
+    group: root
+    mode: '0640'
+  register: stigforge_rsyslog_remote_access
+  tags:
+  - rsyslog_remote_access_monitoring
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
+- name: Restart rsyslog after the remote-access monitoring rule changed
+  ansible.builtin.systemd:
+    name: rsyslog
+    state: restarted
+  when: stigforge_rsyslog_remote_access is changed
+  tags:
+  - rsyslog_remote_access_monitoring
+  - no_reboot_needed

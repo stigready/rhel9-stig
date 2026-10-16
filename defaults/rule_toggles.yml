@@ -275,6 +275,7 @@ rhel9stig_grub2_pti_argument: '{{ rhel9stig_RHEL_09_212050 | default(true) }}'
 rhel9stig_grub2_vsyscall_argument: '{{ rhel9stig_RHEL_09_212035 | default(true) }}'
 rhel9stig_harden_sshd_macs_opensshserver_conf_crypto_policy: '{{ (rhel9stig_RHEL_09_255070 | default(true) | bool) and (rhel9stig_RHEL_09_255075
   | default(true) | bool) }}'
+rhel9stig_install_smartcard_packages: true
 rhel9stig_kernel_module_atm_disabled: '{{ rhel9stig_RHEL_09_213045 | default(true) }}'
 rhel9stig_kernel_module_bluetooth_disabled: '{{ rhel9stig_RHEL_09_291035 | default(true) }}'
 rhel9stig_kernel_module_can_disabled: '{{ rhel9stig_RHEL_09_213050 | default(true) }}'
@@ -343,6 +344,7 @@ rhel9stig_rsyslog_cron_logging: '{{ rhel9stig_RHEL_09_652060 | default(true) }}'
 rhel9stig_rsyslog_encrypt_offload_actionsendstreamdriverauthmode: '{{ rhel9stig_RHEL_09_652040 | default(true) }}'
 rhel9stig_rsyslog_encrypt_offload_actionsendstreamdrivermode: '{{ rhel9stig_RHEL_09_652045 | default(true) }}'
 rhel9stig_rsyslog_nolisten: '{{ rhel9stig_RHEL_09_652025 | default(true) }}'
+rhel9stig_rsyslog_remote_access_monitoring: true
 rhel9stig_selinux_policytype: '{{ rhel9stig_RHEL_09_431015 | default(true) }}'
 rhel9stig_selinux_state: '{{ rhel9stig_RHEL_09_431010 | default(true) }}'
 rhel9stig_service_auditd_enabled: '{{ rhel9stig_RHEL_09_653015 | default(true) }}'
