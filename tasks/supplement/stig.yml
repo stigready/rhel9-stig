@@ -453,6 +453,43 @@
 # SSH sessions for an hour. Start it if needed (a no-op when running), then require a live auditd pid or fail the build.
 # No rule-id tag on purpose: a product guarantee about the role's own side effects, not a per-rule opt-out.
 # ---------------------------------------------------------------------------------------------
+# RHEL-09-255070 / RHEL-09-255075 (harden_sshd_macs_openssh_conf_crypto_policy, harden_sshd_macs_opensshserver_conf_crypto_policy).
+# Decision 0069 (owner 2026-10-17): no exemption for sshd rules. SSG 0.1.82 contradicts itself here: fips_custom_stig_sub_policy
+# (RHEL-09-215105) requires STIG.pmod to hold exactly `mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256` (512 first), while the MAC rules'
+# variable sshd_approved_macs (stig_rhel9) is `hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512`
+# (256 first) and the OVAL compares the back-end MACs line for equality. The old pre-task wrote 256-first, then SSG's Cat2
+# "Create custom crypto policy - mac" task (regexp ^mac@SSH=) overwrote it with 512-first (rhel-9:stig v1.0.2 log 347 / 1820).
+# Keep SSG's line (215105 passes) and add a LATER line crypto-policies applies last: `mac@SSH = ...` with spaces around `=`,
+# which neither SSG's regexp nor the 215105 pattern matches. Verified on a RHEL 9.8 guest, 2026-10-17: with SSG's line alone the
+# back-ends read 512-etm,256-etm,512,256 (the shipped failure); with this line appended and `update-crypto-policies --set
+# FIPS:STIG` they read exactly the variable's value, and `sshd -t` passes. stigready's fips role re-runs update-crypto-policies
+# later; it rebuilds from this module, so the order survives.
+- name: Append the STIG-ordered SSH MACs after the SSG mac line (harden_sshd_macs_opensshserver_conf_crypto_policy)
+  ansible.builtin.lineinfile:
+    path: /etc/crypto-policies/policies/modules/STIG.pmod
+    regexp: '^mac@SSH\s+='
+    line: mac@SSH = HMAC-SHA2-256 HMAC-SHA2-512
+    insertafter: EOF
+    create: true
+    owner: root
+    group: root
+    mode: '0644'
+  register: stigforge_stig_macs
+  tags:
+  - harden_sshd_macs_openssh_conf_crypto_policy
+  - harden_sshd_macs_opensshserver_conf_crypto_policy
+  - DISA-STIG-RHEL-09-255070
+  - DISA-STIG-RHEL-09-255075
+
+- name: Rebuild the crypto-policy back-ends from STIG.pmod (harden_sshd_macs_opensshserver_conf_crypto_policy)
+  # Same policy SSG's own "Implement STIG Sub Crypto Policy" task sets (Cat2), so this changes only the module's effect.
+  ansible.builtin.command: update-crypto-policies --set FIPS:STIG
+  when: stigforge_stig_macs is changed
+  changed_when: true
+  tags:
+  - harden_sshd_macs_openssh_conf_crypto_policy
+  - harden_sshd_macs_opensshserver_conf_crypto_policy
+
 - name: Product hardening | Ensure auditd is running after the role's audit changes
   ansible.builtin.systemd:
     name: auditd

@@ -17,6 +17,7 @@ rhel9stig_accounts_no_uid_except_zero: '{{ rhel9stig_RHEL_09_411100 | default(tr
 rhel9stig_accounts_password_pam_dcredit: '{{ rhel9stig_RHEL_09_611070 | default(true) }}'
 rhel9stig_accounts_password_pam_dictcheck: '{{ rhel9stig_RHEL_09_611105 | default(true) }}'
 rhel9stig_accounts_password_pam_difok: '{{ rhel9stig_RHEL_09_611115 | default(true) }}'
+rhel9stig_accounts_password_pam_enforce_root: '{{ rhel9stig_RHEL_09_611060 | default(true) }}'
 rhel9stig_accounts_password_pam_lcredit: '{{ rhel9stig_RHEL_09_611065 | default(true) }}'
 rhel9stig_accounts_password_pam_maxclassrepeat: '{{ rhel9stig_RHEL_09_611120 | default(true) }}'
 rhel9stig_accounts_password_pam_maxrepeat: '{{ rhel9stig_RHEL_09_611125 | default(true) }}'
@@ -377,6 +378,7 @@ rhel9stig_sshd_set_idle_timeout: '{{ rhel9stig_RHEL_09_255100 | default(true) }}
 rhel9stig_sshd_set_keepalive: '{{ rhel9stig_RHEL_09_255095 | default(true) }}'
 rhel9stig_sshd_set_loglevel_verbose: '{{ rhel9stig_RHEL_09_255030 | default(true) }}'
 rhel9stig_sshd_x11_use_localhost: '{{ rhel9stig_RHEL_09_255175 | default(true) }}'
+rhel9stig_sssd_offline_cred_expiration: '{{ rhel9stig_RHEL_09_631020 | default(true) }}'
 rhel9stig_sudo_remove_no_authenticate: '{{ rhel9stig_RHEL_09_432025 | default(true) }}'
 rhel9stig_sudo_require_reauthentication: '{{ rhel9stig_RHEL_09_432015 | default(true) }}'
 rhel9stig_sudoers_validate_passwd: '{{ rhel9stig_RHEL_09_432020 | default(true) }}'
@@ -413,6 +415,7 @@ rhel9stig_sysctl_net_ipv6_conf_all_forwarding: '{{ rhel9stig_RHEL_09_254025 | de
 rhel9stig_sysctl_net_ipv6_conf_default_accept_ra: '{{ rhel9stig_RHEL_09_254030 | default(true) }}'
 rhel9stig_sysctl_net_ipv6_conf_default_accept_redirects: '{{ rhel9stig_RHEL_09_254035 | default(true) }}'
 rhel9stig_sysctl_net_ipv6_conf_default_accept_source_route: '{{ rhel9stig_RHEL_09_254040 | default(true) }}'
+rhel9stig_usbguard_generate_policy: '{{ rhel9stig_RHEL_09_291030 | default(true) }}'
 rhel9stig_use_pam_wheel_for_su: true
 rhel9stig_wireless_disable_interfaces: '{{ rhel9stig_RHEL_09_291040 | default(true) }}'
 rhel9stig_xwindows_runlevel_target: '{{ rhel9stig_RHEL_09_211030 | default(true) }}'

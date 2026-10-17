@@ -7881,6 +7881,38 @@
         OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_password_pam_difok | default(true) | bool)
 - block:
+  - name: Ensure PAM Enforces Password Requirements - Enforce for root User
+    ansible.builtin.lineinfile:
+      path: /etc/security/pwquality.conf
+      create: true
+      regexp: ''
+      line: enforce_for_root
+      state: present
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - '"libpwquality" in ansible_facts.packages'
+    tags:
+    - CCE-86356-3
+    - DISA-STIG-RHEL-09-611060
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(1)(a)
+    - NIST-800-53-IA-5(4)
+    - NIST-800-53-IA-5(c)
+    - accounts_password_pam_enforce_root
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+    - restrict_strategy
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure PAM Enforces Password Requirements - Enforce for root User'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure PAM Enforces Password Requirements - Enforce for root User'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_accounts_password_pam_enforce_root | default(true)
+    | bool)
+- block:
   - name: Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters - Find pwquality.conf.d files
     ansible.builtin.find:
       paths: /etc/security/pwquality.conf.d/
@@ -13339,6 +13371,193 @@
         skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_encrypt_offload_actionsendstreamdrivermode
     | default(true) | bool)
+- block:
+  - name: 'Ensure remote access methods are monitored in Rsyslog: Set facts'
+    ansible.builtin.set_fact:
+      conf_files:
+      - /etc/rsyslog.conf
+      remote_methods:
+      - selector: auth.*
+        regexp: ^[^#]*auth\.\*.*$
+        location: /var/log/secure
+      - selector: authpriv.*
+        regexp: ^[^#]*authpriv\.\*.*$
+        location: /var/log/secure
+      - selector: daemon.*
+        regexp: ^[^#]*daemon\.\*.*$
+        location: /var/log/messages
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - '"rsyslog" in ansible_facts.packages'
+    tags:
+    - CCE-87960-1
+    - DISA-STIG-RHEL-09-652030
+    - NIST-800-53-AC-17(1)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - rsyslog_remote_access_monitoring
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure remote access methods are monitored in Rsyslog: Set facts'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure remote access methods are monitored in Rsyslog: Set facts'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)
+- block:
+  - name: 'Ensure remote access methods are monitored in Rsyslog: Ensure rsyslog.conf exists'
+    ansible.builtin.file:
+      path: '{{ conf_files.0 }}'
+      state: touch
+      access_time: preserve
+      modification_time: preserve
+      mode: 420
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - '"rsyslog" in ansible_facts.packages'
+    tags:
+    - CCE-87960-1
+    - DISA-STIG-RHEL-09-652030
+    - NIST-800-53-AC-17(1)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - rsyslog_remote_access_monitoring
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure remote access methods are monitored in Rsyslog: Ensure rsyslog.conf
+      exists'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure remote access methods are monitored in Rsyslog: Ensure rsyslog.conf exists'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)
+- block:
+  - name: 'Ensure remote access methods are monitored in Rsyslog: Gather conf.d files'
+    ansible.builtin.find:
+      patterns:
+      - '*.conf'
+      paths:
+      - /etc/rsyslog.d
+    register: rsyslogd
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - '"rsyslog" in ansible_facts.packages'
+    tags:
+    - CCE-87960-1
+    - DISA-STIG-RHEL-09-652030
+    - NIST-800-53-AC-17(1)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - rsyslog_remote_access_monitoring
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure remote access methods are monitored in Rsyslog: Gather conf.d files''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure remote access methods are monitored in Rsyslog: Gather conf.d files'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)
+- block:
+  - name: 'Ensure remote access methods are monitored in Rsyslog: Set conf file(s)'
+    ansible.builtin.set_fact:
+      conf_files: '{{ conf_files + [item.path] }}'
+    loop: '{{ rsyslogd.files }}'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - '"rsyslog" in ansible_facts.packages'
+    - rsyslogd.matched > 0
+    tags:
+    - CCE-87960-1
+    - DISA-STIG-RHEL-09-652030
+    - NIST-800-53-AC-17(1)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - rsyslog_remote_access_monitoring
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure remote access methods are monitored in Rsyslog: Set conf file(s)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure remote access methods are monitored in Rsyslog: Set conf file(s)'' raised an error (module
+        or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state
+        independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)
+- block:
+  - name: 'Ensure remote access methods are monitored in Rsyslog: Check for existing values'
+    ansible.builtin.lineinfile:
+      path: '{{ item.1 }}'
+      regexp: '{{ item.0.regexp }}'
+      state: absent
+    check_mode: true
+    changed_when: false
+    register: remote_method_values
+    loop: '{{ remote_methods|product(conf_files)|list }}'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - '"rsyslog" in ansible_facts.packages'
+    tags:
+    - CCE-87960-1
+    - DISA-STIG-RHEL-09-652030
+    - NIST-800-53-AC-17(1)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - rsyslog_remote_access_monitoring
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure remote access methods are monitored in Rsyslog: Check for existing
+      values'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure remote access methods are monitored in Rsyslog: Check for existing values'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)
+- block:
+  - name: 'Ensure remote access methods are monitored in Rsyslog: Configure'
+    ansible.builtin.lineinfile:
+      path: /etc/rsyslog.conf
+      line: '{{ item.item.0.selector }} {{ item.item.0.location }}'
+      insertafter: ^.*\/var\/log\/secure.*$
+      create: true
+      mode: 420
+    loop: '{{ remote_method_values.results }}'
+    when:
+    - '"kernel-core" in ansible_facts.packages'
+    - '"rsyslog" in ansible_facts.packages'
+    - item.found == 0
+    tags:
+    - CCE-87960-1
+    - DISA-STIG-RHEL-09-652030
+    - NIST-800-53-AC-17(1)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - rsyslog_remote_access_monitoring
+  rescue:
+  - name: 'StigForge: continue after error in ''Ensure remote access methods are monitored in Rsyslog: Configure'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Ensure remote access methods are monitored in Rsyslog: Configure'' raised an error (module or templating)
+        and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
+    bool)
 - block:
   - name: Ensure rsyslog Does Not Accept Remote Messages Unless Acting As Log Server - Define Rsyslog Config Lines Regex in
       Legacy Syntax
@@ -35844,6 +36063,256 @@
         raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
         resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sshd_x11_use_localhost | default(true) | bool)
+- block:
+  - name: Configure SSSD to Expire Offline Credentials - Ensure sssd config directory exists
+    ansible.builtin.file:
+      path: /etc/sssd/conf.d
+      state: directory
+      mode: '0711'
+    when: '"sssd-common" in ansible_facts.packages'
+    tags:
+    - CCE-87996-5
+    - DISA-STIG-RHEL-09-631020
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(13)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - sssd_offline_cred_expiration
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure SSSD to Expire Offline Credentials - Ensure sssd config directory
+      exists'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure SSSD to Expire Offline Credentials - Ensure sssd config directory exists'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sssd_offline_cred_expiration | default(true) | bool)
+- block:
+  - name: Configure SSSD to Expire Offline Credentials - Test for domain group in main config
+    ansible.builtin.command: grep '^\s*\[domain\/[^]]*]' /etc/sssd/sssd.conf
+    register: test_grep_domain
+    failed_when: false
+    changed_when: false
+    check_mode: false
+    when: '"sssd-common" in ansible_facts.packages'
+    tags:
+    - CCE-87996-5
+    - DISA-STIG-RHEL-09-631020
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(13)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - sssd_offline_cred_expiration
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure SSSD to Expire Offline Credentials - Test for domain group in main
+      config'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure SSSD to Expire Offline Credentials - Test for domain group in main config'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sssd_offline_cred_expiration | default(true) | bool)
+- block:
+  - name: Configure SSSD to Expire Offline Credentials - Test for domain group in conf.d
+    ansible.builtin.shell: grep -rs '^\s*\[domain\/[^]]*]' /etc/sssd/conf.d/*.conf 2>/dev/null
+    register: test_grep_domain_conf_d
+    failed_when: false
+    changed_when: false
+    check_mode: false
+    when: '"sssd-common" in ansible_facts.packages'
+    tags:
+    - CCE-87996-5
+    - DISA-STIG-RHEL-09-631020
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(13)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - sssd_offline_cred_expiration
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure SSSD to Expire Offline Credentials - Test for domain group in conf.d''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure SSSD to Expire Offline Credentials - Test for domain group in conf.d'' raised an error
+        (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system
+        state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sssd_offline_cred_expiration | default(true) | bool)
+- block:
+  - name: Configure SSSD to Expire Offline Credentials - Add default domain group (if no domain there)
+    community.general.ini_file:
+      path: /etc/sssd/sssd.conf
+      section: '{{ item.section }}'
+      option: '{{ item.option }}'
+      value: '{{ item.value }}'
+      create: true
+      mode: 384
+    with_items:
+    - section: sssd
+      option: domains
+      value: default
+    - section: domain/default
+      option: id_provider
+      value: files
+    when:
+    - '"sssd-common" in ansible_facts.packages'
+    - test_grep_domain.stdout is defined
+    - test_grep_domain.stdout | length < 1
+    - test_grep_domain_conf_d.stdout is defined
+    - test_grep_domain_conf_d.stdout | length < 1
+    tags:
+    - CCE-87996-5
+    - DISA-STIG-RHEL-09-631020
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(13)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - sssd_offline_cred_expiration
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure SSSD to Expire Offline Credentials - Add default domain group (if
+      no domain there)'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure SSSD to Expire Offline Credentials - Add default domain group (if no domain there)'' raised
+        an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting
+        system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sssd_offline_cred_expiration | default(true) | bool)
+- block:
+  - name: Configure SSD to Expire Offline Credentials
+    community.general.ini_file:
+      path: /etc/sssd/sssd.conf
+      section: pam
+      option: offline_credentials_expiration
+      value: 1
+      create: true
+      mode: 384
+    when: '"sssd-common" in ansible_facts.packages'
+    tags:
+    - CCE-87996-5
+    - DISA-STIG-RHEL-09-631020
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(13)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - sssd_offline_cred_expiration
+  rescue:
+  - name: 'StigForge: continue after error in ''Configure SSD to Expire Offline Credentials'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Configure SSD to Expire Offline Credentials'' raised an error (module or templating) and was skipped;
+        continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sssd_offline_cred_expiration | default(true) | bool)
+- block:
+  - name: Find all the conf files inside /etc/sssd/conf.d
+    ansible.builtin.find:
+      paths: /etc/sssd/conf.d
+      patterns: '*.conf'
+    register: sssd_conf_d_files
+    when: '"sssd-common" in ansible_facts.packages'
+    tags:
+    - CCE-87996-5
+    - DISA-STIG-RHEL-09-631020
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(13)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - sssd_offline_cred_expiration
+  rescue:
+  - name: 'StigForge: continue after error in ''Find all the conf files inside /etc/sssd/conf.d'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Find all the conf files inside /etc/sssd/conf.d'' raised an error (module or templating) and was
+        skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sssd_offline_cred_expiration | default(true) | bool)
+- block:
+  - name: Fix offline_credentials_expiration configuration in /etc/sssd/conf.d
+    ansible.builtin.replace:
+      path: '{{ item.path }}'
+      regexp: '[^#]*offline_credentials_expiration.*'
+      replace: offline_credentials_expiration = 1
+    with_items: '{{ sssd_conf_d_files.files }}'
+    when: '"sssd-common" in ansible_facts.packages'
+    tags:
+    - CCE-87996-5
+    - DISA-STIG-RHEL-09-631020
+    - NIST-800-53-CM-6(a)
+    - NIST-800-53-IA-5(13)
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - medium_severity
+    - no_reboot_needed
+    - sssd_offline_cred_expiration
+  rescue:
+  - name: 'StigForge: continue after error in ''Fix offline_credentials_expiration configuration in /etc/sssd/conf.d'' (OpenSCAP
+      is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Fix offline_credentials_expiration configuration in /etc/sssd/conf.d'' raised an error (module or
+        templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_sssd_offline_cred_expiration | default(true) | bool)
+- block:
+  - name: Generate USBGuard Policy
+    block:
+    - name: Check that the /etc/usbguard/rules.conf exists
+      ansible.builtin.stat:
+        path: /etc/usbguard/rules.conf
+      register: policy_file
+    - name: Create USBGuard Policy configuration
+      ansible.builtin.command: usbguard generate-policy
+      register: policy
+      when: not (policy_file is not skipped and policy_file.stat.exists) or (policy_file is not skipped and policy_file.stat.size)
+        == 0
+    - name: Copy the Generated Policy configuration to a persistent file
+      ansible.builtin.copy:
+        content: '{{ policy.stdout }}'
+        dest: /etc/usbguard/rules.conf
+        mode: 384
+      when: not (policy_file is not skipped and policy_file.stat.exists) or (policy_file is not skipped and policy_file.stat.size)
+        == 0
+    - name: Add comment into /etc/usbguard/rules.conf when system has no USB devices
+      ansible.builtin.lineinfile:
+        path: /etc/usbguard/rules.conf
+        line: '# No USB devices found'
+        state: present
+      when: not (policy_file is not skipped and policy_file.stat.exists) or (policy_file is not skipped and policy_file.stat.size)
+        == 0
+    - name: Enable service usbguard
+      ansible.builtin.systemd:
+        name: usbguard
+        enabled: 'yes'
+        state: started
+        masked: 'no'
+    when:
+    - ( ansible_architecture != "s390x" and "kernel-core" in ansible_facts.packages )
+    - '"usbguard" in ansible_facts.packages'
+    tags:
+    - CCE-88882-6
+    - DISA-STIG-RHEL-09-291030
+    - NIST-800-53-CM-8(3)(a)
+    - NIST-800-53-IA-3
+    - configure_strategy
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+    - usbguard_generate_policy
+  rescue:
+  - name: 'StigForge: continue after error in ''Generate USBGuard Policy'' (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Generate USBGuard Policy'' raised an error (module or templating) and was skipped; continuing so
+        later rules still run. OpenSCAP evaluates the resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_usbguard_generate_policy | default(true) | bool)
 - block:
   - name: Switch to multi-user runlevel
     ansible.builtin.file:

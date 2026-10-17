@@ -1118,6 +1118,49 @@
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rsyslog_remote_access_monitoring | default(true) |
     bool)
 - block:
+  - name: Append the STIG-ordered SSH MACs after the SSG mac line (harden_sshd_macs_opensshserver_conf_crypto_policy)
+    ansible.builtin.lineinfile:
+      path: /etc/crypto-policies/policies/modules/STIG.pmod
+      regexp: ^mac@SSH\s+=
+      line: mac@SSH = HMAC-SHA2-256 HMAC-SHA2-512
+      insertafter: EOF
+      create: true
+      owner: root
+      group: root
+      mode: '0644'
+    register: stigforge_stig_macs
+    tags:
+    - harden_sshd_macs_openssh_conf_crypto_policy
+    - harden_sshd_macs_opensshserver_conf_crypto_policy
+    - DISA-STIG-RHEL-09-255070
+    - DISA-STIG-RHEL-09-255075
+  rescue:
+  - name: 'StigForge: continue after error in ''Append the STIG-ordered SSH MACs after the SSG mac line (harden_sshd_macs_opensshserver_conf_crypto_policy)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Append the STIG-ordered SSH MACs after the SSG mac line (harden_sshd_macs_opensshserver_conf_crypto_policy)''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_harden_sshd_macs_opensshserver_conf_crypto_policy
+    | default(true) | bool)
+- block:
+  - name: Rebuild the crypto-policy back-ends from STIG.pmod (harden_sshd_macs_opensshserver_conf_crypto_policy)
+    ansible.builtin.command: update-crypto-policies --set FIPS:STIG
+    when: stigforge_stig_macs is changed
+    changed_when: true
+    tags:
+    - harden_sshd_macs_openssh_conf_crypto_policy
+    - harden_sshd_macs_opensshserver_conf_crypto_policy
+  rescue:
+  - name: 'StigForge: continue after error in ''Rebuild the crypto-policy back-ends from STIG.pmod (harden_sshd_macs_opensshserver_conf_crypto_policy)''
+      (OpenSCAP is the score gate)'
+    ansible.builtin.debug:
+      msg: 'StigForge: ''Rebuild the crypto-policy back-ends from STIG.pmod (harden_sshd_macs_opensshserver_conf_crypto_policy)''
+        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
+        resulting system state independently.'
+  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_harden_sshd_macs_opensshserver_conf_crypto_policy
+    | default(true) | bool)
+- block:
   - name: Product hardening | Ensure auditd is running after the role's audit changes
     ansible.builtin.systemd:
       name: auditd

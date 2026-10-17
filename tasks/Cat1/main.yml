@@ -29,37 +29,6 @@
         resulting system state independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_fips_custom_stig_sub_policy | default(true) | bool)
 - block:
-  - name: Add the STIG approved MACs to the STIG crypto sub-policy module (harden_sshd_macs_opensshserver_conf_crypto_policy)
-    ansible.builtin.lineinfile:
-      path: /etc/crypto-policies/policies/modules/STIG.pmod
-      owner: root
-      group: root
-      mode: '0644'
-      line: mac@SSH=HMAC-SHA2-256 HMAC-SHA2-512
-      create: true
-      regexp: ^mac@SSH
-    when: '"kernel-core" in ansible_facts.packages'
-    tags:
-    - harden_sshd_macs_openssh_conf_crypto_policy
-    - harden_sshd_macs_opensshserver_conf_crypto_policy
-    - DISA-STIG-RHEL-09-255070
-    - DISA-STIG-RHEL-09-255075
-    - configure_strategy
-    - low_complexity
-    - low_disruption
-    - high_severity
-    - no_reboot_needed
-    - stigforge_gapfill
-  rescue:
-  - name: 'StigForge: continue after error in ''Add the STIG approved MACs to the STIG crypto sub-policy module (harden_sshd_macs_opensshserver_conf_crypto_policy)''
-      (OpenSCAP is the score gate)'
-    ansible.builtin.debug:
-      msg: 'StigForge: ''Add the STIG approved MACs to the STIG crypto sub-policy module (harden_sshd_macs_opensshserver_conf_crypto_policy)''
-        raised an error (module or templating) and was skipped; continuing so later rules still run. OpenSCAP evaluates the
-        resulting system state independently.'
-  when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_harden_sshd_macs_opensshserver_conf_crypto_policy
-    | default(true) | bool)
-- block:
   - name: 'Uninstall vsftpd Package: Ensure vsftpd is removed'
     ansible.builtin.package:
       name: vsftpd
