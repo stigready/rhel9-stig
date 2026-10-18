@@ -491,6 +491,8 @@
   - harden_sshd_macs_opensshserver_conf_crypto_policy
 
 - name: Product hardening | Ensure auditd is running after the role's audit changes
+  # RHEL 10 CIS L1 does not install audit (rhel-10:cis-l1 leg b1a2dace6686: auditctl not found); only where auditd exists.
+  when: "'audit' in ansible_facts.packages"
   ansible.builtin.systemd:
     name: auditd
     state: started
@@ -500,6 +502,8 @@
   - no_reboot_needed
 
 - name: Product hardening | auditd must be running (a stopped auditd with immutable rules wedges every audited syscall)
+  # RHEL 10 CIS L1 does not install audit (rhel-10:cis-l1 leg b1a2dace6686: auditctl not found); only where auditd exists.
+  when: "'audit' in ansible_facts.packages"
   ansible.builtin.command: auditctl -s
   register: stigforge_auditd_status
   changed_when: false

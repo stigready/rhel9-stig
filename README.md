@@ -2,7 +2,7 @@
 
 **Ansible hardening role** for **RHEL 9** (DISA STIG). Suitable for playbooks, Packer/Ansible provisioners, and golden-image pipelines. Search keywords: `ansible`, `ansible-role`, `compliance`, `devsecops`, `disa`, `disa-stig`, `hardening`, `infrastructure`, `openscap`, `redhat`, `rhel`, `rhel9`, `security`, `stig`.
 
-StigForge-exported Ansible role **`rhel9_stig`** · release **`0.3.36`**.
+StigForge-exported Ansible role **`rhel9_stig`** · release **`0.3.37`**.
 Matrix cell status: **`green`**.
 
 ## Install (Ansible Galaxy)
@@ -13,7 +13,7 @@ lives under `compliance/` and is not loaded when the role runs.
 From **Ansible Galaxy** (after import; namespace `stigready`):
 
 ```bash
-ansible-galaxy role install stigready.rhel9_stig,0.3.36
+ansible-galaxy role install stigready.rhel9_stig,0.3.37
 ```
 
 From **GitHub** (public):
@@ -23,7 +23,7 @@ From **GitHub** (public):
 roles:
   - src: https://github.com/stigready/rhel9-stig
     scm: git
-    version: v0.3.36   # or an immutable commit SHA
+    version: v0.3.37   # or an immutable commit SHA
     name: rhel9_stig
 ```
 
@@ -49,7 +49,7 @@ These rules are excluded from the OpenSCAP score gate. Most depend on the networ
 | `selinux_context_elevation_for_sudo` | RHEL-09-431016 | Adds no sudoers line. SSG ships no Ansible remediation for this rule, so the role has nothing to strip; it deliberately does not write the line from the STIG fix text. | Map the administrator login to `sysadm_u` (`semanage login -a -s sysadm_u -r s0-s0:c0.c1023 %wheel`), allow SSH logins for it (`setsebool -P ssh_sysadm_login on`), then add the sudoers line from the STIG. |
 | `sysctl_user_max_user_namespaces_no_remediation` | RHEL-09-213105 | Leaves `user.max_user_namespaces` at the system default; it does not set it to 0. Container tooling and browser sandboxes keep working. | If the host runs no containers or sandboxes, set `user.max_user_namespaces = 0` in a file under /etc/sysctl.d/ (and `sysctl -w user.max_user_namespaces=0` for the running system), as RHEL-09-213105 requires. |
 
-Full artifacts per profile: `compliance/releases/0.3.36/<profile>/` (`score.json`, `results.xml`, `arf.xml`, `evidence.json`, `evidence-report.html`, `poam.md`).
+Full artifacts per profile: `compliance/releases/0.3.37/<profile>/` (`score.json`, `results.xml`, `arf.xml`, `evidence.json`, `evidence-report.html`, `poam.md`).
 
 ## Reports & review
 
@@ -62,7 +62,7 @@ Full artifacts per profile: `compliance/releases/0.3.36/<profile>/` (`score.json
 Re-run OpenSCAP in Docker and compare to this release's evidence:
 
 ```bash
-make prove RELEASE=0.3.36
+make prove RELEASE=0.3.37
 ```
 
 Or score your own `results.xml`: see **[compliance/README.md](compliance/README.md)**.
@@ -74,7 +74,7 @@ Or score your own `results.xml`: see **[compliance/README.md](compliance/README.
 
 ## Factory
 
-- Monorepo: [stigready/stigforge](https://github.com/stigready/stigforge) @ `a637196557195597f0b99a57d52d69a08d3c87ac`
-- CI run: https://github.com/stigready/stigforge/actions/runs/39080662313
+- Monorepo: [stigready/stigforge](https://github.com/stigready/stigforge) @ `b0492182116077a8a534b3a149002690d79264d8`
+- CI run: https://github.com/stigready/stigforge/actions/runs/39096266611
 - Catalog: [https://stigready.com/#stigforge](https://stigready.com/#stigforge)
 
