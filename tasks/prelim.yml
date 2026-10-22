@@ -1,5 +1,4 @@
 ---
-# Phase B pilot - lockdown-style prelude (https://github.com/stigready/claude-agents/blob/main/docs/stigforge/role-layout-redhat.md).
 - name: Assert supported RHEL family (RHEL / Rocky / Alma 9)
   ansible.builtin.assert:
     that:

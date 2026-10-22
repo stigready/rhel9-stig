@@ -100,19 +100,6 @@
   tags:
     - use_pam_wheel_for_su
 
-# FIPS mode - RHEL-09-671010. Owner decision 2026-09-20: enablement belongs to the ROLE, and it is
-# NOT a toggle. FIPS is derived from the STIG profile, never chosen: every `stig` image is
-# FIPS and nothing else ever is. A per-rule variable would make it a choice, so these tasks
-# deliberately carry only DISA/CCE tags - the generator derives a toggle from an SSG rule-id
-# tag, and these do not match that pattern, so no `{{ role }}_enable_fips_mode` is created.
-#
-# SSG ships no ANSIBLE remediation for this rule (only `urn:xccdf:fix:script:sh` and an
-# osbuild blueprint), which is why the generator emits nothing for it and it has to live
-# here in the supplement - exactly what the supplement is for.
-#
-# Scope is enablement only. The reboot, the post-reboot verification, the `boot=UUID=`
-# cmdline repair for a separate /boot, and pinning the FIPS kernel against the autoremover
-# stay in the factory: they are build orchestration, not configuration.
 - name: FIPS | Check whether FIPS mode is already enabled
   ansible.builtin.command: fips-mode-setup --check
   register: stigforge_fips_check
@@ -136,25 +123,6 @@
     - high_severity
     - reboot_required
 
-# ---------------------------------------------------------------------------------------
-# Beyond-benchmark product hardening, moved out of the factory (decision 0021: StigForge
-# roles own ALL hardening).
-#
-# These are NOT required by this profile. Verified against the SSG datastream:
-#   - kernel_module_{dccp,freevxfs,hfs,hfsplus,jffs2,udf}_disabled are CIS rules, not STIG.
-#     Only cramfs (RHEL-09-231195), sctp (RHEL-09-213060) and tipc (RHEL-09-213065) are in
-#     the stig profile. On Ubuntu NONE of the nine are.
-#   - sysctl_fs_suid_dumpable is in anssi/ccn/hipaa/pci-dss on RHEL and CIS on Ubuntu -
-#     in neither the RHEL stig nor the RHEL cis profile.
-#
-# StigReady applies them to every hardened image anyway: CIS-grade module blacklisting and
-# suid-dump hardening on a STIG image costs nothing at runtime and is strictly safer. That
-# is a PRODUCT decision, which is why it lives in the role rather than being argued as a
-# benchmark requirement.
-#
-# Tagged DISA/CCE only where a real identifier exists. The rest carry no rule-id tag on
-# purpose - the generator derives a toggle from an SSG rule-id tag, and a product decision
-# is not a per-rule opt-out. Idempotent: harmless where the profile already covers a module.
 - name: Product hardening | Ensure kernel module 'cramfs' is disabled
   ansible.builtin.copy:
     dest: /etc/modprobe.d/cramfs.conf
@@ -446,24 +414,6 @@
   - rsyslog_remote_access_monitoring
   - no_reboot_needed
 
-# ---------------------------------------------------------------------------------------------
-# Leave auditd running. The generated rules restart auditd after editing them (`service auditd restart`, more than once per role);
-# on rhel-9-arm64:cis-l2 (stigready, 2026-10-16) the second restart 14 s after the first stopped auditd and never started it. With
-# the rules immutable (-e 2) and nothing reading events, the audit backlog fills and every audited syscall waits, which wedged new
-# SSH sessions for an hour. Start it if needed (a no-op when running), then require a live auditd pid or fail the build.
-# No rule-id tag on purpose: a product guarantee about the role's own side effects, not a per-rule opt-out.
-# ---------------------------------------------------------------------------------------------
-# RHEL-09-255070 / RHEL-09-255075 (harden_sshd_macs_openssh_conf_crypto_policy, harden_sshd_macs_opensshserver_conf_crypto_policy).
-# Decision 0069 (owner 2026-10-17): no exemption for sshd rules. SSG 0.1.82 contradicts itself here: fips_custom_stig_sub_policy
-# (RHEL-09-215105) requires STIG.pmod to hold exactly `mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256` (512 first), while the MAC rules'
-# variable sshd_approved_macs (stig_rhel9) is `hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512`
-# (256 first) and the OVAL compares the back-end MACs line for equality. The old pre-task wrote 256-first, then SSG's Cat2
-# "Create custom crypto policy - mac" task (regexp ^mac@SSH=) overwrote it with 512-first (rhel-9:stig v1.0.2 log 347 / 1820).
-# Keep SSG's line (215105 passes) and add a LATER line crypto-policies applies last: `mac@SSH = ...` with spaces around `=`,
-# which neither SSG's regexp nor the 215105 pattern matches. Verified on a RHEL 9.8 guest, 2026-10-17: with SSG's line alone the
-# back-ends read 512-etm,256-etm,512,256 (the shipped failure); with this line appended and `update-crypto-policies --set
-# FIPS:STIG` they read exactly the variable's value, and `sshd -t` passes. stigready's fips role re-runs update-crypto-policies
-# later; it rebuilds from this module, so the order survives.
 - name: Append the STIG-ordered SSH MACs after the SSG mac line (harden_sshd_macs_opensshserver_conf_crypto_policy)
   ansible.builtin.lineinfile:
     path: /etc/crypto-policies/policies/modules/STIG.pmod

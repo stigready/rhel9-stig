@@ -1,14 +1,14 @@
 # Source: ComplianceAsCode/content - BSD-3-Clause
 # Phase B: severity folders Cat1/2/3 ([role-layout-redhat.md](../../docs/role-layout-redhat.md))
 ---
-- name: 'StigForge: gather package facts before any rule reads them (stigforge#82)'
+- name: 'StigForge: gather package facts before any rule reads them'
   ansible.builtin.package_facts:
     manager: auto
   tags:
   - always
   - stigforge
   - facts
-- name: 'StigForge: gather service facts before any rule reads them (stigforge#82)'
+- name: 'StigForge: gather service facts before any rule reads them'
   ansible.builtin.service_facts: null
   tags:
   - always

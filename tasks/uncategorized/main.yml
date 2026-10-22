@@ -839,7 +839,7 @@
         independently.'
   when: (stigforge_rules_enabled | default(true) | bool) and (rhel9stig_rootfiles_configured | default(true) | bool)
 - name: 'StigForge: refresh package facts after ''Ensure rootfiles package is installed (rootfiles_configured prerequisite)''
-    installed a package (stigforge#83)'
+    installed a package'
   ansible.builtin.package_facts:
     manager: auto
   tags:
